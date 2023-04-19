@@ -19,6 +19,7 @@ namespace SPG
             
         }break;
         case WM_CLOSE: {
+			assert(wndData);
 			wndData->running = false;
             result = 0;
         }break;
