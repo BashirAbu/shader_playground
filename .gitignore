@@ -31,6 +31,4 @@
 *.out
 *.app
 .vs/
-build/
-out/
-cmake_files/
+cmake_files/*.*
