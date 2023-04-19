@@ -5,7 +5,7 @@
 #endif
 namespace SPG
 {
-	Window* Window::Create(const ApplicationSpecs& specs)
+	Window* Window::Create(const WindowSpecs& specs)
 	{
 		Window* window = nullptr;
 #ifdef SPG_WINDOWS

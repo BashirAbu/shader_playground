@@ -3,3 +3,4 @@
 #include <inttypes.h>
 #include <cassert>
 #include <memory>
+#include "logger.h"
