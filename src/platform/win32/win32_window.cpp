@@ -1,5 +1,6 @@
 #include "win32_window.h"
-
+#include "renderer/renderer_backend.h"
+#include "renderer/render_command.h"
 namespace SPG
 {
     LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
@@ -13,10 +14,24 @@ namespace SPG
         }break;*/
         case WM_CREATE: 
 		{
+			RendererBackendSpecs specs;
+			specs.internalWindowHandle = (void*)hWnd;
+			if(!RendererBackend::Create(specs))
+			{
+				//change context or somehting.
+			}
+
         }break;
         case WM_SIZE: 
 		{
-            
+			if (wndData)
+			{
+				UINT width = LOWORD(lParam);
+				UINT height = HIWORD(lParam);
+				wndData->width = width;
+				wndData->height = height;
+				RenderCommand::SetViewportSize(width, height);
+			}
         }break;
         case WM_CLOSE: {
 			assert(wndData);
@@ -53,7 +68,7 @@ namespace SPG
         windowSize.top = 0;
         windowSize.bottom = specs.height;
 		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
-		hwnd = CreateWindowExW(
+		_hwnd = CreateWindowExW(
 			0,
 			windowClass.lpszClassName,
 			specs.title,
@@ -65,30 +80,36 @@ namespace SPG
 			NULL
 		);
 
-        assert(hwnd);
-        ShowWindow(hwnd, SW_SHOW);
+        assert(_hwnd);
+        ShowWindow(_hwnd, SW_SHOW);
 		_windowData.running = true;
-		SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)&_windowData);
+		SetWindowLongPtrW(_hwnd, GWLP_USERDATA, (LONG_PTR)&_windowData);
+		_hdc = GetDC(_hwnd);
 	}
 
 	Win32Window::~Win32Window()
 	{
-		DestroyWindow(hwnd);
+		DestroyWindow(_hwnd);
 	}
 
 	void* Win32Window::GetPlatformWindowHandle()
 	{
-		return (void*)hwnd;
+		return (void*)_hwnd;
 	}
 	
 	void Win32Window::PollEvents()
 	{
 		MSG msg = {0};
-		while(PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE) > 0)
+		while(PeekMessageW(&msg, _hwnd, 0, 0, PM_REMOVE) > 0)
 		{
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
 		}
+	}
+	
+	void Win32Window::SwapBackBuffer()
+	{
+		SwapBuffers(_hdc);
 	}
 	
 	const bool Win32Window::IsWindowRunning() const

@@ -1,5 +1,4 @@
 #pragma once
-#include "core.h"
 #include <stdio.h>
 
 #define SPG_LOG_TEXT(MSG, ...)\

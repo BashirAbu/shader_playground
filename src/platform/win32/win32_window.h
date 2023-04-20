@@ -17,11 +17,13 @@ namespace SPG
 		~Win32Window();
 		virtual void* GetPlatformWindowHandle();
 		virtual void PollEvents();
-		HWND hwnd;
+        virtual void SwapBackBuffer();
 		const bool IsWindowRunning() const;
 	private:
 		WindowData _windowData;
 		DWORD _windowStyle = 0;
+		HDC _hdc;
+		HWND _hwnd; 
 	};
 }
 #endif

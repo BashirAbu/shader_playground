@@ -1,5 +1,7 @@
 #include "application.h"
-
+#include "renderer/render_command.h"
+#include "renderer/renderer_api.h"
+#include "ImGui/spg_imgui.h"
 namespace SPG
 {
 	Application* Application::_singleton = nullptr;
@@ -21,6 +23,8 @@ namespace SPG
 		windowSpecs.width = specs.width;
 		windowSpecs.height = specs.height;
 		_window = std::unique_ptr<Window>(Window::Create(windowSpecs));
+
+		RendererAPI* api = RendererAPI::Create();
 	}
 	Application::~Application()
 	{
@@ -31,6 +35,9 @@ namespace SPG
 		while(_window->IsWindowRunning())
 		{
 			_window->PollEvents();
+			RenderCommand::SetClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+			RenderCommand::Clear();
+			_window->SwapBackBuffer();
 		}
 	}
 
