@@ -23,7 +23,7 @@ namespace SPG
 		windowSpecs.title = specs.title;
 		windowSpecs.width = specs.width;
 		windowSpecs.height = specs.height;
-		_window = std::unique_ptr<Window>(Window::Create(windowSpecs));
+		_mainWindow = std::unique_ptr<Window>(Window::Create(windowSpecs));
 
 		RendererAPI* api = RendererAPI::Create();
 
@@ -32,10 +32,10 @@ namespace SPG
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-		SPGImGui::InitPlatform(_window->GetPlatformWindowHandle());
+		SPGImGui::InitPlatform(_mainWindow->GetPlatformWindowHandle());
 		
-		ImGui::StyleColorsClassic();
+		ImGui::StyleColorsDark();
+
 
 	}
 	Application::~Application()
@@ -46,13 +46,15 @@ namespace SPG
 	}
 	void Application::Run()
 	{
-		while(_window->IsWindowRunning())
+		while(_mainWindow->IsWindowRunning())
 		{
-			_window->PollEvents();
+			_mainWindow->PollEvents();
 			SPG::RenderCommand::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			RenderCommand::Clear();
 			SPG::SPGImGui::NewFrame();
-/* 			ImGuiWindowFlags window_flags = 0;
+
+			
+ 			ImGuiWindowFlags window_flags = 0;
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowPos(viewport->WorkPos);
 			ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -63,14 +65,44 @@ namespace SPG
 			window_flags &= ~ImGuiWindowFlags_MenuBar;
 			bool open = true;
 			ImGui::Begin("MyWindow", &open, window_flags);
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id);
 			ImGui::End();
-			ImGui::PopStyleVar(); */
-			ImGui::ShowDemoWindow();
+			ImGui::PopStyleVar();
+			window_flags = 0;
+			ImGui::Begin("Window 1", &open, window_flags);
+			ImGui::End();
+
+			ImGui::Begin("Window 2");
+			ImGui::End(); 
+
+			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+			if (ImGui::BeginMainMenuBar()) {
+				if (ImGui::BeginMenu("File")) 
+				{
+					if(ImGui::MenuItem("Exit"))
+					{
+						Quit();
+					}
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+    		}
+			ImGui::Begin("Window 1");
+			ImGui::End(); 
+
+			ImGui::Begin("Window 2");
+			ImGui::End(); 
 			SPG::SPGImGui::EndFrame();
-			_window->SwapBackBuffer();
+			_mainWindow->SwapBackBuffer();
+		} 
 
-		}
-
+	}
+	
+	void Application::Quit()
+	{
+		_mainWindow->Quit();
 	}
 
 	Application* Application::GetSingleton()

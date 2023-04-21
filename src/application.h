@@ -20,12 +20,13 @@ namespace SPG
 
 		Application* GetSingleton();
 		void Run();
+		void Quit();
 	private:
 		Application(const ApplicationSpecs& specs);
 	public:
 
 	private:
-		std::unique_ptr<Window> _window;
+		std::unique_ptr<Window> _mainWindow;
 		static Application* _singleton;
 	};
 }

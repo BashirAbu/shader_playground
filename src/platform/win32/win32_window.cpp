@@ -30,10 +30,10 @@ namespace SPG
 		{
 			if (wndData)
 			{
-				UINT width = LOWORD(lParam);
-				UINT height = HIWORD(lParam);
-				wndData->width = width;
-				wndData->height = height;
+				RECT clientRect;
+				GetClientRect(hWnd, &clientRect);
+				UINT width = clientRect.right - clientRect.left;
+				UINT height = clientRect.bottom - clientRect.top;
 				RenderCommand::SetViewportSize(width, height);
 			}
         }break;
@@ -66,12 +66,13 @@ namespace SPG
         windowClass.lpszClassName = specs.title;
         windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
         RegisterClassW(&windowClass );
+		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
         RECT windowSize = { 0 };
         windowSize.left = 0;
         windowSize.right = specs.width;
         windowSize.top = 0;
         windowSize.bottom = specs.height;
-		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
+		AdjustWindowRectEx(&windowSize, _windowStyle, 0, 0);
 		_hwnd = CreateWindowExW(
 			0,
 			windowClass.lpszClassName,
@@ -109,12 +110,17 @@ namespace SPG
 			ImGui_ImplWin32_WndProcHandler(_hwnd, msg.message, msg.wParam, msg.lParam);
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
-		}
+		} 
 	}
 	
 	void Win32Window::SwapBackBuffer()
 	{
 		SwapBuffers(_hdc);
+	}
+	
+	void Win32Window::Quit()
+	{
+		_windowData.running = false;
 	}
 	
 	const bool Win32Window::IsWindowRunning() const

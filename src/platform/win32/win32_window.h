@@ -18,6 +18,7 @@ namespace SPG
 		virtual void* GetPlatformWindowHandle();
 		virtual void PollEvents();
         virtual void SwapBackBuffer();
+		virtual void Quit();
 		const bool IsWindowRunning() const;
 	private:
 		WindowData _windowData;

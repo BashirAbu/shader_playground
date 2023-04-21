@@ -20,6 +20,7 @@ namespace SPG
 		virtual void PollEvents() = 0;
 		virtual const bool IsWindowRunning() const = 0;
         virtual void SwapBackBuffer() = 0;
+		virtual void Quit() = 0;
 	protected:
 	};
 }
