@@ -29,7 +29,7 @@ namespace SPG
 
 
     #if SPG_DEBUG
-    void APIENTRY GLDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char *message, const void *userParam) 
+    void GLDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char *message, const void *userParam)
     {
     
         SPG_LOG_TEXT("[OPENGL]");
@@ -266,7 +266,7 @@ function = (PFN_##function) wglGetProcAddress(#function);
     {
         _specs = specs;
         LoadOpenGLExtensions();
-        HDC hdc = GetDC((HWND)specs.internalWindowHandle);
+        _hdc = GetDC((HWND)specs.internalWindowHandle);
 
         const int attribList[] =
         {
@@ -283,12 +283,12 @@ function = (PFN_##function) wglGetProcAddress(#function);
 
         int32_t pixelFormat;
         UINT numFormats;
-        wglChoosePixelFormatARB(hdc, attribList, NULL, 1, &pixelFormat, &numFormats);
+        wglChoosePixelFormatARB(_hdc, attribList, NULL, 1, &pixelFormat, &numFormats);
         assert(numFormats != 0);
 
         PIXELFORMATDESCRIPTOR pfd;
-        DescribePixelFormat(hdc, pixelFormat, sizeof(pfd), &pfd);
-        BOOL SPF = SetPixelFormat(hdc, pixelFormat, &pfd);
+        DescribePixelFormat(_hdc, pixelFormat, sizeof(pfd), &pfd);
+        BOOL SPF = SetPixelFormat(_hdc, pixelFormat, &pfd);
         assert(SPF);
 
 #ifdef SPG_DEBUG
@@ -307,9 +307,9 @@ function = (PFN_##function) wglGetProcAddress(#function);
             0,
         };
 #endif
-        HGLRC openglContext = wglCreateContextAttribsARB(hdc, 0, openglContextAttribs);
-        assert(openglContext);
-        BOOL WMC = wglMakeCurrent(hdc, openglContext);
+        HGLRC _openglContext = wglCreateContextAttribsARB(_hdc, 0, openglContextAttribs);
+        assert(_openglContext);
+        BOOL WMC = wglMakeCurrent(_hdc, _openglContext);
         assert(WMC);
 #ifdef SPG_DEBUG
         GLint flags;
@@ -335,7 +335,8 @@ function = (PFN_##function) wglGetProcAddress(#function);
     
     Win32OpenGLRendererBackend::~Win32OpenGLRendererBackend()
     {
-        
+        wglMakeCurrent(_hdc, 0);
+        wglDeleteContext(_openglContext);
     }
 
     

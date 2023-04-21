@@ -22,5 +22,15 @@ namespace SPG
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
+
+	void SPGImGui::Shutdown()
+    {
+		ImGuiIO& io = ImGui::GetIO();
+		//For some reason heob64.exe says io.BackendPlatformUserData is not freed. my brain
+		free(io.BackendPlatformUserData);
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui::DestroyContext();
+		//ImGui_ImplWin32_Shutdown();
+    }
 }
 #endif

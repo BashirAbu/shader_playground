@@ -1,9 +1,13 @@
 #include "win32_window.h"
 #include "renderer/renderer_backend.h"
 #include "renderer/render_command.h"
+
+
+// Copy this line into your .cpp file to forward declare the function.
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace SPG
 {
-    LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
+    static LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		LRESULT result = 0;
 		WindowData* wndData = (WindowData*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
@@ -57,7 +61,7 @@ namespace SPG
 
 		HINSTANCE hInstance = GetModuleHandleA(0);
         WNDCLASSW windowClass = { 0 };
-        windowClass.lpfnWndProc = WindowProc;
+        windowClass.lpfnWndProc = (WNDPROC)WindowProc;
         windowClass.hInstance = hInstance;
         windowClass.lpszClassName = specs.title;
         windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -96,12 +100,13 @@ namespace SPG
 	{
 		return (void*)_hwnd;
 	}
-	
+
 	void Win32Window::PollEvents()
 	{
 		MSG msg = {0};
 		while(PeekMessageW(&msg, _hwnd, 0, 0, PM_REMOVE) > 0)
 		{
+			ImGui_ImplWin32_WndProcHandler(_hwnd, msg.message, msg.wParam, msg.lParam);
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
 		}

@@ -10,6 +10,8 @@ namespace SPG
 
 		static void NewFrame();
 		static void EndFrame();
+
+        static void Shutdown();
     private:
 
     };

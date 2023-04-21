@@ -2,6 +2,7 @@
 #pragma once
 #include "core.h"
 #include "renderer/renderer_backend.h"
+#include <Windows.h>
 namespace SPG
 {
 
@@ -14,6 +15,8 @@ namespace SPG
         virtual RendererBackendAPI GetAPI();
     private:
         RendererBackendSpecs _specs;
+        HDC _hdc;
+        HGLRC _openglContext;
     };
 }
 
