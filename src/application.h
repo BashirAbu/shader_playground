@@ -1,8 +1,11 @@
 #pragma once
 #include "core.h"
 #include "window.h"
+
 namespace SPG
 {
+	class EditorWidnow;
+	class ViewportWidnow;
 	struct ApplicationSpecs
 	{
 		wchar_t* title = L"Shader Playground";
@@ -27,6 +30,8 @@ namespace SPG
 
 	private:
 		std::unique_ptr<Window> _mainWindow;
+		std::unique_ptr<EditorWidnow> _editorWindow;
+		std::unique_ptr<ViewportWidnow> _viewportWindow;
 		static Application* _singleton;
 	};
 }

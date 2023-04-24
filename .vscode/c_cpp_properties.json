@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/src/",
                 "${workspaceFolder}/third_party/dear_imgui",
-                "${workspaceFolder}/third_party/dear_imgui/backends"
+                "${workspaceFolder}/third_party/dear_imgui/backends",
+                "${workspaceFolder}/third_party/stb_image"
             ],
             "defines": [
                 "_DEBUG",

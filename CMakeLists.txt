@@ -23,10 +23,18 @@ set (SOURCE_FILES
      "src/main.cpp"
 	 "src/window.cpp"
 	 "src/application.cpp"
+	 "src/editor_window.cpp"
+	 "src/viewport_window.cpp"
 	 "src/renderer/renderer_backend.cpp"
 	 "src/renderer/renderer_api.cpp"
 	 "src/renderer/render_command.cpp"
+	 "src/renderer/texture.cpp"
+	 "src/renderer/framebuffer.cpp"
+	 "src/renderer/shader.cpp"
 	 "src/renderer/opengl/opengl_renderer_api.cpp"
+	 "src/renderer/opengl/opengl_texture.cpp"
+	 "src/renderer/opengl/opengl_framebuffer.cpp"
+	 "src/renderer/opengl/opengl_shader.cpp"
 	 "src/platform/win32/win32_window.cpp"
 	 "src/platform/win32/opengl/win32_renderer_backend.cpp"
 	 "src/platform/win32/win32_imgui.cpp"
@@ -37,6 +45,7 @@ set (SOURCE_FILES
 	 "third_party/dear_imgui/imgui_widgets.cpp"
 	 "third_party/dear_imgui/backends/imgui_impl_opengl3.cpp"
 	 "third_party/dear_imgui/backends/imgui_impl_win32.cpp"
+	 "third_party/stb_image/stb_image.cpp"
   )
 
 add_executable(shader_playground ${SOURCE_FILES})
@@ -44,6 +53,7 @@ add_executable(shader_playground ${SOURCE_FILES})
 target_include_directories(shader_playground PUBLIC "src/")
 target_include_directories(shader_playground PUBLIC "third_party/dear_imgui/")
 target_include_directories(shader_playground PUBLIC "third_party/dear_imgui/backends")
+target_include_directories(shader_playground PUBLIC "third_party/stb_image")
 
 
 
