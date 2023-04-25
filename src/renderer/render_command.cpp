@@ -17,6 +17,11 @@ namespace SPG
     {
         RendererAPI::GetSingleton()->SetViewportSize(width, height);
     }
+    
+    void RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+    {
+        RendererAPI::GetSingleton()->DrawIndexed(vertexArray);
+    }
 
 
 }

@@ -6,7 +6,7 @@ add_compile_definitions(UNICODE=_UNICODE)
 if(WIN32)
 	add_compile_definitions(SPG_WINDOWS=1)
 	if(MSVC)
-		add_compile_options("/utf-8" "/MDd" "/Zi" "/W3" "/wd4127" "/wd4530" "/wd4459" "/wd5105" "/wd4100" "/wd4996")
+		add_compile_options("/utf-8" "/MDd" "/Zi" "/MP" "/W3" "/wd4127" "/wd4530" "/wd4459" "/wd5105" "/wd4100" "/wd4996")
 		if(CMAKE_BUILD_TYPE MATCHES  "Debug")
 			add_compile_definitions(SPG_DEBUG=1)
 			add_compile_options("/Od") 
@@ -31,12 +31,19 @@ set (SOURCE_FILES
 	 "src/renderer/texture.cpp"
 	 "src/renderer/framebuffer.cpp"
 	 "src/renderer/shader.cpp"
+	 "src/renderer/buffer.cpp"
+	 "src/renderer/vertex_array.cpp"
 	 "src/renderer/opengl/opengl_renderer_api.cpp"
 	 "src/renderer/opengl/opengl_texture.cpp"
 	 "src/renderer/opengl/opengl_framebuffer.cpp"
 	 "src/renderer/opengl/opengl_shader.cpp"
+	 "src/renderer/opengl/opengl_vertex_array.cpp"
+	 "src/renderer/opengl/opengl_buffer.cpp"
 	 "src/platform/win32/win32_window.cpp"
 	 "src/platform/win32/opengl/win32_renderer_backend.cpp"
+
+
+
 	 "src/platform/win32/win32_imgui.cpp"
 	 "third_party/dear_imgui/imgui.cpp"
 	 "third_party/dear_imgui/imgui_draw.cpp"

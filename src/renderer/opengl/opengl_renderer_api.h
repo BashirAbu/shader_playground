@@ -9,9 +9,10 @@ namespace SPG
         OpenGLRendererAPI();
         ~OpenGLRendererAPI();
 
-        void SetClearColor(float r, float g, float b, float a);
-        void Clear();
-        virtual void SetViewportSize(int32_t width, int32_t height);
+        void SetClearColor(float r, float g, float b, float a) override;
+        void Clear() override;
+        void SetViewportSize(int32_t width, int32_t height) override;
+        void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
     private:
     };
 }

@@ -19,5 +19,6 @@ namespace SPG
         Vector2i _size;
         TextureSpecs _specs;
         uint32_t* _textureData = nullptr;
+        uint32_t _internalFormat;
     };
 }
