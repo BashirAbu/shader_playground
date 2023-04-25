@@ -5,8 +5,11 @@ namespace SPG
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {1280, 720};
+        FramebufferSpecs framebufferSpecs = {500, 500};
+        
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
+        TextureSpecs renderTexSpecs;
+        _renderTex = std::shared_ptr<Texture>(Texture::Create(renderTexSpecs));
     }
 
     ViewportWidnow::~ViewportWidnow()
@@ -15,20 +18,20 @@ namespace SPG
     }
     void ViewportWidnow::Show()
     {
-        {
-            RenderCommand::SetViewportSize(1280, 720);
-            _framebuffer->Bind();
-            RenderCommand::SetClearColor(1.0f, 1.0f, 0.0f, 0.5f);
-            RenderCommand::Clear();
-            _framebuffer->Unbind();
-            ImGuiViewport* v = ImGui::GetMainViewport();
-            RenderCommand::SetViewportSize(v->Size.x, v->Size.y);
-
-        }
-        ImGui::Begin("ViewPort");
+       
+        ImGui::Begin("Viewport");
         { 
-            ImVec2 size = ImGui::GetWindowSize();
-            ImGui::Image((void*)(intptr_t)_framebuffer->GetColorAttachment()->GetID(), size);            
+            {
+                RenderCommand::SetViewportSize(_framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
+                _framebuffer->Bind();
+                RenderCommand::SetClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+                RenderCommand::Clear();
+                _framebuffer->Unbind();
+                ImGuiViewport* viewPort = ImGui::GetMainViewport();
+                RenderCommand::SetViewportSize((int32_t)viewPort->Size.x, (int32_t)viewPort->Size.y);
+            }
+            _renderTex->UpdateData((void*)_framebuffer->GetColorAttachment()->GetTextureData(), 200, 200);
+            ImGui::Image((void*)(intptr_t)_renderTex->GetID(), {100, 100});            
         }
         ImGui::End(); 
     }

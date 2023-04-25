@@ -14,5 +14,6 @@ namespace SPG
         private:
         ImGuiWindowFlags _viewPortFlags = 0;
         std::shared_ptr<Framebuffer> _framebuffer;
+        std::shared_ptr<Texture> _renderTex;
     };
 }
