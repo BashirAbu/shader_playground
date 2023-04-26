@@ -1,6 +1,7 @@
 #include "viewport_window.h"
 #include "renderer/render_command.h"
 #include "application.h"
+#include "renderer/opengl/opengl_headers.h"
 namespace SPG
 {
     const char* defVertShader = R"(
@@ -104,9 +105,11 @@ namespace SPG
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {800, 450}; 
+        FramebufferSpecs framebufferSpecs = {1280,  720};
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
         TextureSpecs renderTexSpecs;
+        renderTexSpecs.width = 800;
+        renderTexSpecs.height = 450;
         _renderTex = std::shared_ptr<Texture>(Texture::Create(renderTexSpecs));
         _surface = std::make_shared<Surface>(Vector2i(framebufferSpecs.width, framebufferSpecs.height));
     }
@@ -133,8 +136,7 @@ namespace SPG
                 ImGuiViewport* viewPort = ImGui::GetMainViewport();
                 RenderCommand::SetViewportSize((int32_t)viewPort->Size.x, (int32_t)viewPort->Size.y);
             }
-
-            //_renderTex->UpdateData((void*)_framebuffer->GetColorAttachment()->GetTextureData(), _framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
+            _renderTex->Copy(_framebuffer->GetColorAttachment()->GetID(), _framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
             size = ImGui::GetWindowSize();
             
             ImVec2 imageSize;
@@ -161,8 +163,7 @@ namespace SPG
                 imageSize.y = (float)desiredHeight;
                 ImGui::SetCursorPos(offset);
             }
-            ImGui::Image((void*)(intptr_t)_framebuffer->GetColorAttachment()->GetID(), imageSize);
-
+            ImGui::Image((void*)(intptr_t)_renderTex->GetID(), imageSize);
             if(ImGui::Button("Compile"))
             {
                 _surface->RecompileShader();

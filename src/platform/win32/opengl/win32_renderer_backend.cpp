@@ -202,6 +202,7 @@ function = (PFN_##function) wglGetProcAddress(#function);
         OPENGL_LOAD_FUNCTION_PTR(glFramebufferTexture2D);
         OPENGL_LOAD_FUNCTION_PTR(glBindFramebuffer);
         OPENGL_LOAD_FUNCTION_PTR(glDeleteFramebuffers);
+        OPENGL_LOAD_FUNCTION_PTR(glCopyImageSubData);
     }
 
     void Win32OpenGLRendererBackend::LoadOpenGLExtensions()

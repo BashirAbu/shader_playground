@@ -738,6 +738,7 @@ typedef GLenum (*PFN_glCheckFramebufferStatus)(GLenum target);
 typedef void (*PFN_glFramebufferTexture2D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
 typedef void (*PFN_glBindFramebuffer)(GLenum target, GLuint framebuffer);
 typedef void (*PFN_glDeleteFramebuffers)(GLsizei n, const GLuint* framebuffers);
+typedef void (*PFN_glCopyImageSubData) (GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth);
 
 
 
@@ -784,3 +785,4 @@ FUNCTION_PTR(glCheckFramebufferStatus);
 FUNCTION_PTR(glFramebufferTexture2D);
 FUNCTION_PTR(glBindFramebuffer);
 FUNCTION_PTR(glDeleteFramebuffers);
+FUNCTION_PTR(glCopyImageSubData);

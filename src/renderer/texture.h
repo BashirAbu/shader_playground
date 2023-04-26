@@ -24,6 +24,7 @@ namespace SPG
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         virtual void UpdateData(void* data, int32_t width, int32_t height) = 0;
+        virtual void Copy(uint32_t id, int32_t width, int32_t height) = 0;
         virtual const void* GetTextureData() = 0;
         virtual const Vector2i GetSize() const = 0;
         virtual const uint32_t GetID() const = 0;

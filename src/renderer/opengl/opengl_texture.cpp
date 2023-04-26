@@ -89,6 +89,25 @@ namespace SPG
         return _textureData;
     }
     
+    void OpenGLTexture::Copy(uint32_t id, int32_t width, int32_t height)
+    {
+        glDeleteTextures(1, &_id);
+        glGenTextures(1, &_id);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _id);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, width, height, 0, _internalFormat, GL_UNSIGNED_BYTE, 0);      
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glCopyImageSubData(id, GL_TEXTURE_2D, 0, 0, 0, 0, _id, GL_TEXTURE_2D, 0, 0, 0, 0, width, height, 1);
+
+    }
+    
     const Vector2i OpenGLTexture::GetSize() const 
     {
         return _size;
