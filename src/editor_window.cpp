@@ -18,7 +18,7 @@ namespace SPG
         ImGui::Begin("Editor");
         {
             size = ImGui::GetContentRegionAvail();
-            ImGui::InputTextMultiline("edit", _scriptBuffer, 65000, size);
+            ImGui::InputTextMultiline("edit", _scriptBuffer, 65000, size, ImGuiInputTextFlags_AllowTabInput);
         }
         ImGui::End();
     }

@@ -62,6 +62,7 @@ namespace SPG
 		while(_mainWindow->IsWindowRunning())
 		{
 			_time += _deltaTime;
+			_renderedFrames += uint32_t(1.0f / _deltaTime);
 			_mainWindow->PollEvents();
 			SPG::RenderCommand::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			RenderCommand::Clear();
@@ -84,8 +85,9 @@ namespace SPG
 			
 			_editorWindow->Show();
 			_viewportWindow->Show();
-
-			ImGui::ShowDemoWindow();
+			//ImGui::Begin("Console");
+			//ImGui::End();
+			//ImGui::ShowDemoWindow();
 
 			SPG::SPGImGui::EndFrame();
 			_mainWindow->SwapBackBuffer();
@@ -115,6 +117,11 @@ namespace SPG
 	const float Application::GetTime()
 	{
 		return _singleton->_time;
+	}
+	
+	const uint32_t Application::GetNumberOfRenderedFrames()
+	{
+		return _singleton->_renderedFrames;
 	}
 	
 	char* Application::GetScriptBuffer()

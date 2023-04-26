@@ -18,8 +18,6 @@ namespace SPG
                     #version 330
                     in vec2 fragCoord;
                     out vec4 FragColor;
-                    uniform vec2 iResolution;
-                    uniform float iTime;
                     void main()
                     { 
                         FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -31,10 +29,11 @@ namespace SPG
                     out vec4 FragColor;
                     uniform vec2 iResolution;
                     uniform float iTime;
+                    uniform int iFrame;
                     )";
     const char* bottomFragShader = R"(
                     void main()
-                    { 
+                    {
                         mainImage(FragColor, fragCoord);
                     }
     )";
@@ -93,6 +92,7 @@ namespace SPG
         _shader->Bind();
         _shader->UploadUniformVec2f("iResolution", Vector2f((float)Application::GetViewportFramebufferSize().X, (float)Application::GetViewportFramebufferSize().Y));
         _shader->UploadUniform1f("iTime", Application::GetTime());
+        _shader->UploadUniform1i("iFrame", (int)Application::GetNumberOfRenderedFrames());
         _vertexArray->Bind();
         RenderCommand::DrawIndexed(_vertexArray);
         _shader->Unbind();
@@ -104,7 +104,7 @@ namespace SPG
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {1280, 720}; 
+        FramebufferSpecs framebufferSpecs = {800, 450}; 
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
         TextureSpecs renderTexSpecs;
         _renderTex = std::shared_ptr<Texture>(Texture::Create(renderTexSpecs));
@@ -119,7 +119,8 @@ namespace SPG
     {
         
         ImGui::Begin("Viewport");
-        { 
+        {
+            ImGui::Text("FPS: %f", 1.0f / Application::GetDeltaTime());
             {
                 RenderCommand::SetViewportSize(_framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
                 _framebuffer->Bind();
@@ -133,7 +134,7 @@ namespace SPG
                 RenderCommand::SetViewportSize((int32_t)viewPort->Size.x, (int32_t)viewPort->Size.y);
             }
 
-            _renderTex->UpdateData((void*)_framebuffer->GetColorAttachment()->GetTextureData(), _framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
+            //_renderTex->UpdateData((void*)_framebuffer->GetColorAttachment()->GetTextureData(), _framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
             size = ImGui::GetWindowSize();
             
             ImVec2 imageSize;
@@ -160,7 +161,7 @@ namespace SPG
                 imageSize.y = (float)desiredHeight;
                 ImGui::SetCursorPos(offset);
             }
-            ImGui::Image((void*)(intptr_t)_renderTex->GetID(), imageSize);
+            ImGui::Image((void*)(intptr_t)_framebuffer->GetColorAttachment()->GetID(), imageSize);
 
             if(ImGui::Button("Compile"))
             {

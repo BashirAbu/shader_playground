@@ -190,6 +190,7 @@ function = (PFN_##function) wglGetProcAddress(#function);
         OPENGL_LOAD_FUNCTION_PTR(glCreateVertexArrays);
         OPENGL_LOAD_FUNCTION_PTR(glUniformMatrix4fv);
         OPENGL_LOAD_FUNCTION_PTR(glGetUniformLocation);
+        OPENGL_LOAD_FUNCTION_PTR(glUniform1i);
         OPENGL_LOAD_FUNCTION_PTR(glUniform1f);
         OPENGL_LOAD_FUNCTION_PTR(glUniform2fv);
         OPENGL_LOAD_FUNCTION_PTR(glUniform3fv);
@@ -314,7 +315,7 @@ function = (PFN_##function) wglGetProcAddress(#function);
         assert(_openglContext);
         BOOL WMC = wglMakeCurrent(_hdc, _openglContext);
         assert(WMC);
-#ifdef SPG_DEBUG
+#if 0
         GLint flags;
         glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
         if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)

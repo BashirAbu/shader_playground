@@ -89,13 +89,24 @@ namespace SPG
         glUseProgram(0);
 	}
     
+    void OpenGLShader::UploadUniform1i(const char* name, int value)
+    {
+        glUseProgram(m_ProgramID);
+        int32_t location = glGetUniformLocation(m_ProgramID, name);
+        if (location == -1)
+        {
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
+        }
+        glUniform1i(location, value);
+    }
+    
     void OpenGLShader::UploadUniform1f(const char* name, float value)
     {
         glUseProgram(m_ProgramID);
         int32_t location = glGetUniformLocation(m_ProgramID, name);
         if (location == -1)
         {
-            SPG_LOG_ERROR("%s uniform does not exist", name);
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
         }
         glUniform1f(location, value);
     }
@@ -105,7 +116,7 @@ namespace SPG
         int32_t location = glGetUniformLocation(m_ProgramID, name);
         if (location == -1)
         {
-            SPG_LOG_ERROR("%s uniform does not exist", name);
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
         }
         glUniformMatrix4fv(location, 1, GL_FALSE, mat.Data);
     }
@@ -116,7 +127,7 @@ namespace SPG
         int32_t location = glGetUniformLocation(m_ProgramID, name);
         if (location == -1)
         {
-            SPG_LOG_ERROR("%s uniform does not exist", name);
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
         }
         glUniform2fv(location, 1, vec2.elements);
     }
@@ -127,7 +138,7 @@ namespace SPG
         int32_t location = glGetUniformLocation(m_ProgramID, name);
         if (location == -1)
         {
-            SPG_LOG_ERROR("%s uniform does not exist", name);
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
         }
         glUniform3fv(location, 1, vec3.elements);
     }
@@ -138,7 +149,7 @@ namespace SPG
         int32_t location = glGetUniformLocation(m_ProgramID, name);
         if (location == -1)
         {
-            SPG_LOG_ERROR("%s uniform does not exist", name);
+            //SPG_LOG_ERROR("%s uniform does not exist", name);
         }
         glUniform4fv(location, 1, vec4.elements);
     }

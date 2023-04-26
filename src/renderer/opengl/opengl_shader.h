@@ -11,6 +11,7 @@ namespace SPG
 		void Recompile(const char* vertexShaderSource, const char* fragmentShaderSource);
 		void Bind() override;
 		void Unbind() override;
+		void UploadUniform1i(const char* name, int value) override;
 		void UploadUniform1f(const char* name, float value) override;
 		void UploadUniformMat4(const char* name, const Mat4f& mat) override;
 		void UploadUniformVec2f(const char* name, const Vector2f& vec2) override;

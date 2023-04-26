@@ -27,6 +27,7 @@ namespace SPG
 		static const Vector2i GetViewportFramebufferSize();
 		static const float GetDeltaTime();
 		static const float GetTime();
+		static const uint32_t GetNumberOfRenderedFrames();
 		static char* GetScriptBuffer();
 	private:
 		Application(const ApplicationSpecs& specs);
@@ -34,6 +35,7 @@ namespace SPG
 
 	private:
 		float _time = 0.0f, _deltaTime = 0.0f;
+		uint32_t _renderedFrames = 0;
 		std::unique_ptr<Window> _mainWindow;
 		std::unique_ptr<EditorWidnow> _editorWindow;
 		std::unique_ptr<ViewportWidnow> _viewportWindow;
