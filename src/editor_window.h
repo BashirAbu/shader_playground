@@ -9,9 +9,10 @@ namespace SPG
         EditorWidnow();
         ~EditorWidnow();
         void Show();
-
+        char* GetScriptBuffer();
         ImVec2 size;
         private:
+        char* _scriptBuffer;
         ImGuiWindowFlags _editorFlags = 0;
     };
 }

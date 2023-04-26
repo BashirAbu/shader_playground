@@ -1,32 +1,55 @@
 #include "viewport_window.h"
 #include "renderer/render_command.h"
+#include "application.h"
 namespace SPG
 {
     const char* defVertShader = R"(
                     #version 330
                     layout (location = 0) in vec3 aPosition;
+                    layout (location = 1) in vec2 aCoord;
+                    out vec2 fragCoord;
                     void main()
                     {
                         gl_Position = vec4(aPosition, 1.0);
+                        fragCoord = aCoord;
                     }
                     )";
     const char* defFragShader = R"(
                     #version 330
+                    in vec2 fragCoord;
                     out vec4 FragColor;
+                    uniform vec2 iResolution;
+                    uniform float iTime;
                     void main()
                     { 
-                        FragColor = vec4(1.0f, 0.0f, 1.0f, 1.0f);
+                        FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
                     }
+    )";
+    const char* topFragShader = R"(
+                    #version 330
+                    in vec2 fragCoord;
+                    out vec4 FragColor;
+                    uniform vec2 iResolution;
+                    uniform float iTime;
                     )";
-    Surface::Surface()
+    const char* bottomFragShader = R"(
+                    void main()
+                    { 
+                        mainImage(FragColor, fragCoord);
+                    }
+    )";
+    Surface::Surface(const Vector2i& framebufferSize)
     {
+        _shaderBuffer = new char[70000];
+        Vector2i res = framebufferSize;
         _shader = std::shared_ptr<Shader>(Shader::Create(defVertShader, defFragShader));
         float vertices[] = 
         {
-            1.0f, 1.0f, 0.0f, // top right
-            1.0, -1.0f, 0.0f, // bottom right
-            -1.0f, -1.0f, 0.0f, //bottom left
-            -1.0f, 1.0f, 0.0f // top left
+             //aPosition        aCoord
+             1.0f,  1.0f, 0.0f, (float)res.X, 0.0f, //top right
+             1.0f, -1.0f, 0.0f, (float)res.X, (float)res.Y, //bottom right
+            -1.0f, -1.0f, 0.0f, 0.0f,         (float)res.Y, //bottom left
+            -1.0f,  1.0f, 0.0f, 0.0f,         0.0f  //top left
         };
 
         uint32_t indices[]
@@ -40,7 +63,8 @@ namespace SPG
         _vertexArray->Bind();
         BufferLayout layout = 
         {
-            {ShaderDataType::FLOAT3, "aPosition"}
+            {ShaderDataType::FLOAT3, "aPosition"},
+            {ShaderDataType::FLOAT2, "aCoord"}
         };
         _vertexBuffer->SetLayout(layout);
         _vertexArray->SetVertexBuffer(_vertexBuffer);
@@ -48,31 +72,43 @@ namespace SPG
         _vertexArray->Unbind();
     }
     
-    Surface::~Surface()
+    void Surface::Recreate()
     {
         
+    }
+    
+    void Surface::RecompileShader()
+    {
+        memset(_shaderBuffer, 0, 70000 * sizeof(char));
+        snprintf(_shaderBuffer, 70000 * sizeof(_shaderBuffer), "%s\n%s\n%s\0", topFragShader, Application::GetScriptBuffer(), bottomFragShader);
+        _shader->Recompile(defVertShader, _shaderBuffer);
+    }
+    Surface::~Surface()
+    {
+        delete _shaderBuffer;
     }
     
     void Surface::Render()
     {
         _shader->Bind();
+        _shader->UploadUniformVec2f("iResolution", Vector2f((float)Application::GetViewportFramebufferSize().X, (float)Application::GetViewportFramebufferSize().Y));
+        _shader->UploadUniform1f("iTime", Application::GetTime());
         _vertexArray->Bind();
         RenderCommand::DrawIndexed(_vertexArray);
         _shader->Unbind();
         _vertexArray->Unbind();
 
     }
+    
 
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {500, 500};
-        
+        FramebufferSpecs framebufferSpecs = {1280, 720}; 
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
         TextureSpecs renderTexSpecs;
         _renderTex = std::shared_ptr<Texture>(Texture::Create(renderTexSpecs));
-
-        _surface = std::make_shared<Surface>();
+        _surface = std::make_shared<Surface>(Vector2i(framebufferSpecs.width, framebufferSpecs.height));
     }
 
     ViewportWidnow::~ViewportWidnow()
@@ -81,13 +117,13 @@ namespace SPG
     }
     void ViewportWidnow::Show()
     {
-       
+        
         ImGui::Begin("Viewport");
         { 
             {
                 RenderCommand::SetViewportSize(_framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
                 _framebuffer->Bind();
-                RenderCommand::SetClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+                RenderCommand::SetClearColor(0.0f, 1.0f, 0.0f, 1.0f);
                 RenderCommand::Clear();
                 //Render the thing.
                 _surface->Render();
@@ -125,7 +161,24 @@ namespace SPG
                 ImGui::SetCursorPos(offset);
             }
             ImGui::Image((void*)(intptr_t)_renderTex->GetID(), imageSize);
+
+            if(ImGui::Button("Compile"))
+            {
+                _surface->RecompileShader();
+            }
         }
-        ImGui::End(); 
+        ImGui::End();
+
+         
+    }
+    
+    const Vector2i& ViewportWidnow::GetFramebufferSize() const
+    {
+        return _framebuffer->GetColorAttachment()->GetSize();
+    }
+    
+    void ViewportWidnow::OnFramebufferSizeChange()
+    {
+        
     }
 }

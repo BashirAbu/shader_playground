@@ -1,7 +1,7 @@
 #pragma once
 #include "core.h"
 #include "window.h"
-
+#include "math/spg_maths.h"
 namespace SPG
 {
 	class EditorWidnow;
@@ -20,15 +20,20 @@ namespace SPG
 	public:
 		static Application* Create(const ApplicationSpecs& specs);
 		~Application();
-
 		Application* GetSingleton();
+		void Init();
 		void Run();
 		void Quit();
+		static const Vector2i GetViewportFramebufferSize();
+		static const float GetDeltaTime();
+		static const float GetTime();
+		static char* GetScriptBuffer();
 	private:
 		Application(const ApplicationSpecs& specs);
 	public:
 
 	private:
+		float _time = 0.0f, _deltaTime = 0.0f;
 		std::unique_ptr<Window> _mainWindow;
 		std::unique_ptr<EditorWidnow> _editorWindow;
 		std::unique_ptr<ViewportWidnow> _viewportWindow;
