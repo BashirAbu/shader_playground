@@ -29,6 +29,7 @@ set (SOURCE_FILES
 	 "src/application.cpp"
 	 "src/editor_window.cpp"
 	 "src/viewport_window.cpp"
+	 "src/file_system.cpp"
 	 "src/renderer/renderer_backend.cpp"
 	 "src/renderer/renderer_api.cpp"
 	 "src/renderer/render_command.cpp"
@@ -44,11 +45,10 @@ set (SOURCE_FILES
 	 "src/renderer/opengl/opengl_vertex_array.cpp"
 	 "src/renderer/opengl/opengl_buffer.cpp"
 	 "src/platform/win32/win32_window.cpp"
+	 "src/platform/win32/win32_imgui.cpp"
+	 "src/platform/win32/win32_file_system.cpp"
 	 "src/platform/win32/opengl/win32_renderer_backend.cpp"
 
-
-
-	 "src/platform/win32/win32_imgui.cpp"
 	 "third_party/dear_imgui/imgui.cpp"
 	 "third_party/dear_imgui/imgui_draw.cpp"
 	 "third_party/dear_imgui/imgui_demo.cpp"

@@ -5,7 +5,10 @@
 #include "ImGui/spg_imgui.h"
 #include "editor_window.h"
 #include "viewport_window.h"
+#include "file_system.h"
 #include <chrono>
+
+
 namespace SPG
 {
 	Application* Application::_singleton = nullptr;
@@ -26,7 +29,7 @@ namespace SPG
 		windowSpecs.title = specs.title;
 		windowSpecs.width = specs.width;
 		windowSpecs.height = specs.height;
-		_mainWindow = std::unique_ptr<Window>(Window::Create(windowSpecs));
+		_mainWindow = std::shared_ptr<Window>(Window::Create(windowSpecs));
 		RendererAPI* api = RendererAPI::Create();
 
 
@@ -44,6 +47,7 @@ namespace SPG
 		SPG::SPGImGui::Shutdown();
 		delete SPG::RendererBackend::GetSingleton();
 		delete SPG::RendererAPI::GetSingleton();
+		delete SPG::FileSystem::GetSingleton();
 	}
 
 	void Application::Init()
@@ -67,11 +71,16 @@ namespace SPG
 			SPG::RenderCommand::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			RenderCommand::Clear();
 			SPG::SPGImGui::NewFrame();
- 
+
 			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 			if (ImGui::BeginMainMenuBar()) {
 				if (ImGui::BeginMenu("File")) 
 				{
+					if(ImGui::MenuItem("Load Project"))
+					{
+						std::string filepath = FileSystem::OpenFileDialog(0);
+			        	SPG_LOG_MESSAGE("%s", filepath.c_str());
+					}
 					if(ImGui::MenuItem("Exit"))
 					{
 						Quit();
@@ -79,6 +88,7 @@ namespace SPG
 
 					ImGui::EndMenu();
 				}
+				
 				ImGui::EndMainMenuBar();
     		}
 

@@ -105,7 +105,7 @@ namespace SPG
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {1280,  720};
+        FramebufferSpecs framebufferSpecs = {1920,  1080};
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
         TextureSpecs renderTexSpecs;
         renderTexSpecs.width = 800;

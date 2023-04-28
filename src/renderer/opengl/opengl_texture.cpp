@@ -68,8 +68,7 @@ namespace SPG
         _size = {width, height};
         delete _textureData;
         _textureData = new uint32_t[width * height];
-        glDeleteTextures(1, &_id);
-        glGenTextures(1, &_id);
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _id);
 
@@ -91,8 +90,6 @@ namespace SPG
     
     void OpenGLTexture::Copy(uint32_t id, int32_t width, int32_t height)
     {
-        glDeleteTextures(1, &_id);
-        glGenTextures(1, &_id);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _id);
 

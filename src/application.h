@@ -36,7 +36,7 @@ namespace SPG
 	private:
 		float _time = 0.0f, _deltaTime = 0.0f;
 		uint32_t _renderedFrames = 0;
-		std::unique_ptr<Window> _mainWindow;
+		std::shared_ptr<Window> _mainWindow;
 		std::unique_ptr<EditorWidnow> _editorWindow;
 		std::unique_ptr<ViewportWidnow> _viewportWindow;
 		static Application* _singleton;
