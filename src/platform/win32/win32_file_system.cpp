@@ -16,7 +16,9 @@ namespace SPG
     
     FileData Win32FileSystem::InternalOpenFile(const char* filepath)
     {
-        FileData result;
+        FileData result = {0};
+        if(filepath[0] == '\0')
+            return result;
         FILE* file;
         file = fopen(filepath, "r");
         if(file)
@@ -69,6 +71,24 @@ namespace SPG
         ofn.lpstrFilter = "All Files\0*.*\0Shader Playground Project\0*.shader_playground\0";
         ofn.nFilterIndex = 2;
         GetOpenFileNameA(&ofn);
+        result = ofn.lpstrFile;
+        return result;
+    }
+    
+    std::string Win32FileSystem::InternalSaveAsDialog(void* windowHandle)
+    {
+        std::string result = "";
+        OPENFILENAMEA ofn;
+        char file_name [256];
+        ZeroMemory(&ofn, sizeof(OPENFILENAME));
+        ofn.lStructSize = sizeof(OPENFILENAME);
+        ofn.hwndOwner = (HWND)windowHandle;
+        ofn.lpstrFile = file_name;
+        ofn.lpstrFile[0] = '\0';
+        ofn.nMaxFile = 256;
+        ofn.lpstrFilter = "All Files\0*.*\0Shader Playground Project\0*.shader_playground\0";
+        ofn.nFilterIndex = 1;     
+        GetSaveFileNameA(&ofn);
         result = ofn.lpstrFile;
         return result;
     }

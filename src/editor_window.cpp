@@ -5,8 +5,8 @@ namespace SPG
     EditorWidnow::EditorWidnow()
     {
         _editorFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        _scriptBuffer = new char[65000];
-        memset(_scriptBuffer, 0, 65000 * sizeof(char));
+        _scriptBuffer = new char[SCRIPT_BUFFER_SIZE];
+        memset(_scriptBuffer, 0, SCRIPT_BUFFER_SIZE * sizeof(char));
     }
 
     EditorWidnow::~EditorWidnow()
@@ -18,7 +18,7 @@ namespace SPG
         ImGui::Begin("Editor");
         {
             size = ImGui::GetContentRegionAvail();
-            ImGui::InputTextMultiline("edit", _scriptBuffer, 65000, size, ImGuiInputTextFlags_AllowTabInput);
+            ImGui::InputTextMultiline("edit", _scriptBuffer, SCRIPT_BUFFER_SIZE, size, ImGuiInputTextFlags_AllowTabInput);
         }
         ImGui::End();
     }
@@ -26,5 +26,11 @@ namespace SPG
     char* EditorWidnow::GetScriptBuffer()
     {
         return _scriptBuffer;
+    }
+    
+    void EditorWidnow::SetScriptBuffer(void* data, size_t size)
+    {
+        memset(_scriptBuffer, 0, SCRIPT_BUFFER_SIZE * sizeof(char));
+        strcpy(_scriptBuffer, (char*)data);
     }
 }

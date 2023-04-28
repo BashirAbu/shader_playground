@@ -78,8 +78,22 @@ namespace SPG
 				{
 					if(ImGui::MenuItem("Load Project"))
 					{
-						std::string filepath = FileSystem::OpenFileDialog(0);
-			        	SPG_LOG_MESSAGE("%s", filepath.c_str());
+						LoadProject(FileSystem::OpenFileDialog(0));
+					}
+					if(ImGui::MenuItem("Save"))
+					{
+						if(_projectPath == "")
+						{
+							SaveProjectAs();
+						}
+						else
+						{
+							SaveProject();
+						}
+					}
+					if(ImGui::MenuItem("Save As..."))
+					{
+						SaveProjectAs();
 					}
 					if(ImGui::MenuItem("Exit"))
 					{
@@ -95,9 +109,7 @@ namespace SPG
 			
 			_editorWindow->Show();
 			_viewportWindow->Show();
-			//ImGui::Begin("Console");
-			//ImGui::End();
-			//ImGui::ShowDemoWindow();
+
 
 			SPG::SPGImGui::EndFrame();
 			_mainWindow->SwapBackBuffer();
@@ -112,6 +124,44 @@ namespace SPG
 	void Application::Quit()
 	{
 		_mainWindow->Quit();
+	}
+	
+	void Application::LoadProject(std::string projectPath)
+	{
+		const char* extension = strrchr(projectPath.c_str(), '.');
+		if(strcmp(extension, ".shader_playground") !=0)
+		{
+			SPG_LOG_ERROR("Not Supported File Format. %s", projectPath.c_str());
+			return;
+		}
+		FileData data = FileSystem::OpenFile(projectPath.c_str());
+		_editorWindow->SetScriptBuffer(data.data, data.size);
+		_viewportWindow->GetSurface()->RecompileShader();
+		_projectPath = projectPath;
+		//xml parser stuff.
+	}
+	
+	void Application::SaveProjectAs()
+	{
+		_projectPath = FileSystem::SaveAsDialog(_mainWindow->GetPlatformWindowHandle());
+		if(_projectPath != "")
+		{
+			const char* extension = strrchr(_projectPath.c_str(), '.');
+			if(!extension)
+			{
+				_projectPath = _projectPath + ".shader_playground";
+			}
+			SaveProject();
+		}
+	}
+	
+	void Application::SaveProject()
+	{
+		if(_projectPath != "")
+		{
+			const char* buffer =  _editorWindow->GetScriptBuffer();
+			FileSystem::WriteToFile(_projectPath.c_str(), (void*)buffer, strlen(buffer) + 1, OpenMode::Overwrite);
+		}
 	}
 	
 	const Vector2i Application::GetViewportFramebufferSize()

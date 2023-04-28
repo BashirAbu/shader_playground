@@ -13,7 +13,7 @@ namespace SPG
         FileData InternalOpenFile(const char* filepath) override;
         void InternalWriteToFile(const char* filepath, void* data, size_t size, OpenMode mode) override;
         std::string InternalOpenFileDialog(void* windowHandle) override;
-
+        virtual std::string InternalSaveAsDialog(void* windowHandle);
     private:
     };
 } // namespace SPG

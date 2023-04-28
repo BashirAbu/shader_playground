@@ -24,6 +24,9 @@ namespace SPG
 		void Init();
 		void Run();
 		void Quit();
+		void LoadProject(std::string projectPath);
+		void SaveProjectAs();
+		void SaveProject();
 		static const Vector2i GetViewportFramebufferSize();
 		static const float GetDeltaTime();
 		static const float GetTime();
@@ -39,6 +42,7 @@ namespace SPG
 		std::shared_ptr<Window> _mainWindow;
 		std::unique_ptr<EditorWidnow> _editorWindow;
 		std::unique_ptr<ViewportWidnow> _viewportWindow;
+		std::string _projectPath = "";
 		static Application* _singleton;
 	};
 }

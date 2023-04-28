@@ -33,6 +33,7 @@ namespace SPG
             ~ViewportWidnow();
             void Show();
             const Vector2i& GetFramebufferSize() const;
+            const std::shared_ptr<Surface> GetSurface() { return _surface; }
             ImVec2 size;
             void OnFramebufferSizeChange();
         private:
