@@ -57,11 +57,13 @@ set (SOURCE_FILES
 	 "third_party/dear_imgui/backends/imgui_impl_opengl3.cpp"
 	 "third_party/dear_imgui/backends/imgui_impl_win32.cpp"
 	 "third_party/stb_image/stb_image.cpp"
+	 "third_party/tinyxml2/tinyxml2.cpp"
   )
 
 add_executable(shader_playground ${SOURCE_FILES})
 
 target_include_directories(shader_playground PUBLIC "src/")
+target_include_directories(shader_playground PUBLIC "third_party/")
 target_include_directories(shader_playground PUBLIC "third_party/dear_imgui/")
 target_include_directories(shader_playground PUBLIC "third_party/dear_imgui/backends")
 target_include_directories(shader_playground PUBLIC "third_party/stb_image")

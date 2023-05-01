@@ -54,6 +54,7 @@ namespace SPG
 	{
 		_viewportWindow = std::make_unique<ViewportWidnow>();
 		_editorWindow = std::make_unique<EditorWidnow>();
+		_viewportWindow->GetSurface()->RecompileShader();
 	}
 
 
