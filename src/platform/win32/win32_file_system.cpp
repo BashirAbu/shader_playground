@@ -16,7 +16,7 @@ namespace SPG
     
     FileData Win32FileSystem::InternalOpenFile(const char* filepath)
     {
-        FileData result = {0};
+        FileData result;
         if(filepath[0] == '\0')
             return result;
         FILE* file;
@@ -26,7 +26,8 @@ namespace SPG
             fseek(file, 0, SEEK_END);
             result.size = ftell(file);
             rewind(file);
-            result.data = (void*)new uint8_t[result.size];
+            result.data = malloc(result.size);
+            memset(result.data, 0, result.size);
             fread(result.data, result.size, 1, file);
             fclose(file); 
         }

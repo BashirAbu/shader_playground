@@ -7,7 +7,7 @@
 #include "viewport_window.h"
 #include "file_system.h"
 #include <chrono>
-
+#include "tinyxml2/tinyxml2.h"
 
 namespace SPG
 {
@@ -42,6 +42,8 @@ namespace SPG
 
 
 	}
+	
+	
 	Application::~Application()
 	{
 		SPG::SPGImGui::Shutdown();
@@ -129,6 +131,8 @@ namespace SPG
 	
 	void Application::LoadProject(std::string projectPath)
 	{
+		if(projectPath.length() == 0)
+			return;
 		const char* extension = strrchr(projectPath.c_str(), '.');
 		if(strcmp(extension, ".shader_playground") !=0)
 		{
@@ -136,10 +140,20 @@ namespace SPG
 			return;
 		}
 		FileData data = FileSystem::OpenFile(projectPath.c_str());
-		_editorWindow->SetScriptBuffer(data.data, data.size);
+		char* loadedText = (char*)(data.data);
+		tinyxml2::XMLDocument xmlDoc;
+		tinyxml2::XMLError result = xmlDoc.Parse(loadedText);
+		if (result != tinyxml2::XML_SUCCESS) 
+		{
+			SPG_LOG_ERROR("Error reading project file!");
+			return;
+   		}
+		tinyxml2::XMLElement* projectElement = xmlDoc.FirstChildElement("project");
+		tinyxml2::XMLElement* scriptElement = projectElement->FirstChildElement("script");
+		const char* script = scriptElement->GetText();
+		_editorWindow->SetScriptBuffer((void*)script, strlen(script));
 		_viewportWindow->GetSurface()->RecompileShader();
 		_projectPath = projectPath;
-		//xml parser stuff.
 	}
 	
 	void Application::SaveProjectAs()
@@ -160,11 +174,50 @@ namespace SPG
 	{
 		if(_projectPath != "")
 		{
-			const char* buffer =  _editorWindow->GetScriptBuffer();
-			FileSystem::WriteToFile(_projectPath.c_str(), (void*)buffer, strlen(buffer) + 1, OpenMode::Overwrite);
+			std::string projectFile = BuildProjectFile();
+			FileSystem::WriteToFile(_projectPath.c_str(), (void*)projectFile.c_str(), projectFile.length() + 1, OpenMode::Overwrite);
 		}
 	}
-	
+	std::string Application::BuildProjectFile()
+	{
+		std::string result;
+		const char* buffer =  _editorWindow->GetScriptBuffer();
+		
+		tinyxml2::XMLDocument xmlDoc;
+		
+		tinyxml2::XMLElement* rootElement = xmlDoc.NewElement("project");
+		tinyxml2::XMLElement* settingsElement = rootElement->InsertNewChildElement("settings");
+		tinyxml2::XMLElement* vsyncElement = settingsElement->InsertNewChildElement("vsync");
+		vsyncElement->SetText(settings.vsync? "on" : "off");
+
+		tinyxml2::XMLElement* framebufferSizeElement = settingsElement->InsertNewChildElement("framebufferSize");
+		tinyxml2::XMLElement* framebufferWidthElement = framebufferSizeElement->InsertNewChildElement("width");
+		framebufferWidthElement->SetText(settings.framebufferSize.X);
+		tinyxml2::XMLElement* framebufferHeightElement = framebufferSizeElement->InsertNewChildElement("height");
+		framebufferHeightElement->SetText(settings.framebufferSize.Y);
+
+		tinyxml2::XMLElement* fontElement = settingsElement->InsertNewChildElement("font");
+		tinyxml2::XMLElement* fontSizeElement = fontElement->InsertNewChildElement("size");
+		fontSizeElement->SetText(settings.fontSize);
+		tinyxml2::XMLElement* fontColorElement = fontElement->InsertNewChildElement("color");
+		fontColorElement->SetText(settings.color);
+		tinyxml2::XMLElement* fontFamilyElement = fontElement->InsertNewChildElement("family");
+		fontFamilyElement->SetText(settings.fontFamily);
+
+
+		tinyxml2::XMLElement* scriptElement = rootElement->InsertNewChildElement("script");
+		tinyxml2::XMLText* codeText = xmlDoc.NewText(buffer);
+		codeText->SetCData(true);
+		scriptElement->InsertEndChild(codeText);
+
+		xmlDoc.InsertFirstChild(rootElement);
+
+		tinyxml2::XMLPrinter printer;
+
+		xmlDoc.Print(&printer);
+		result = printer.CStr();
+		return result;
+	}
 	const Vector2i Application::GetViewportFramebufferSize()
 	{
 		return _singleton->_viewportWindow->GetFramebufferSize();

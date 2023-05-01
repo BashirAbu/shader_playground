@@ -6,8 +6,24 @@ namespace SPG
     class Window;
     struct FileData
     {
-        size_t size;
-        void* data;
+        FileData(){}
+        //move constructor
+        FileData(FileData&& fileData)
+        {
+            size = fileData.size;
+            data = fileData.data;
+            fileData.data = nullptr;
+        }
+        ~FileData()
+        {
+            if(data)
+            {
+                free(data);
+                data = nullptr;
+            }
+        }
+        size_t size = 0;
+        void* data = nullptr;
     };
     enum class OpenMode
     {

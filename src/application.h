@@ -15,6 +15,14 @@ namespace SPG
 		int32_t windowPosY = 200;
 
 	};
+	struct Settings
+	{
+		bool vsync = true;
+		Vector2i framebufferSize = {1280, 720};
+		uint32_t fontSize = 12;
+		char* fontFamily = "";
+		uint32_t color = 0xffffffff;
+	};
 	class Application
 	{
 	public:
@@ -34,8 +42,9 @@ namespace SPG
 		static char* GetScriptBuffer();
 	private:
 		Application(const ApplicationSpecs& specs);
+		std::string BuildProjectFile();
 	public:
-
+		Settings settings;
 	private:
 		float _time = 0.0f, _deltaTime = 0.0f;
 		uint32_t _renderedFrames = 0;
