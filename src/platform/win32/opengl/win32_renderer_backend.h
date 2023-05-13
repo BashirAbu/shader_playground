@@ -13,6 +13,7 @@ namespace SPG
         ~Win32OpenGLRendererBackend();
         void LoadOpenGLExtensions();
         virtual RendererBackendAPI GetAPI();
+		virtual void SetVsync(bool on) override;
     private:
         RendererBackendSpecs _specs;
         HDC _hdc;

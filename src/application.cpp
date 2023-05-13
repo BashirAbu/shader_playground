@@ -40,6 +40,7 @@ namespace SPG
 		SPGImGui::InitPlatform(_mainWindow->GetPlatformWindowHandle());
 		ImGui::StyleColorsDark();
 
+		io.Fonts->AddFontFromFileTTF("data/Roboto-Medium.ttf", 16);
 
 	}
 	
@@ -58,7 +59,7 @@ namespace SPG
 		_editorWindow = std::make_unique<EditorWidnow>();
 		_viewportWindow->GetSurface()->RecompileShader();
 	}
-	bool openSettings = false;
+
 	void Application::Run()
 	{
 		std::chrono::time_point start_time = std::chrono::high_resolution_clock::now();
@@ -71,7 +72,6 @@ namespace SPG
 			_renderedFrames += uint32_t(1.0f / _deltaTime);
 
 
-			//SPG::SPGImGui::PollEvents();
 			_mainWindow->PollEvents();
 			
 
@@ -104,7 +104,7 @@ namespace SPG
 					}
 					if(ImGui::MenuItem("Settings"))
 					{
-						openSettings = true;
+						_openSettings = true;
 					}
 					if(ImGui::MenuItem("Exit"))
 					{
@@ -117,7 +117,7 @@ namespace SPG
 				ImGui::EndMainMenuBar();
     		}
 			
-			if(openSettings)
+			if(_openSettings)
 			{
 				ImGui::OpenPopup("Settings");
 				ImGui::SetWindowSize({512, 512});
@@ -136,10 +136,6 @@ namespace SPG
 				ImGui::SameLine();
 				ImGui::InputInt2("##", (_tempSettings.framebufferSize.elements));
 
-				ImGui::Text("Font Size:");
-				ImGui::SameLine();
-				ImGui::InputInt("pt", (int*)&(_tempSettings.fontSize));
-
 
 				ImGui::Text("Font Color:");
 				ImGui::SameLine();
@@ -148,9 +144,8 @@ namespace SPG
 				ImGui::SetCursorPos({windowSize.x - 80, windowSize.y});
 				if (ImGui::Button("Cancel")) {
 					ImGui::CloseCurrentPopup();
-					openSettings = false;
+					_openSettings = false;
 					_tempSettings.fontColor = settings.fontColor;
-					_tempSettings.fontSize = settings.fontSize;
 					_tempSettings.framebufferSize = settings.framebufferSize;
 					_tempSettings.vsync = settings.vsync;
 				}
@@ -158,19 +153,17 @@ namespace SPG
 				if(ImGui::Button("OK"))
 				{
 					settings.fontColor = _tempSettings.fontColor;
-					settings.fontSize = _tempSettings.fontSize;
 					settings.framebufferSize = _tempSettings.framebufferSize;
 					settings.vsync = _tempSettings.vsync;
 					ImGui::CloseCurrentPopup();
-					openSettings = false;
+					_openSettings = false;
+					ApplySettings();
 				}
 
 				ImGui::EndPopup();
 			}
 			_editorWindow->Show();
 			_viewportWindow->Show();
-			ImGui::ShowDemoWindow();
-
 			SPG::SPGImGui::EndFrame();
 			_mainWindow->SwapBackBuffer();
 
@@ -208,9 +201,6 @@ namespace SPG
 		tinyxml2::XMLElement* projectElement = xmlDoc.FirstChildElement("project");
 		tinyxml2::XMLElement* scriptElement = projectElement->FirstChildElement("script");
 		const char* script = scriptElement->GetText();
-		_editorWindow->SetScriptBuffer((void*)script, strlen(script));
-		_viewportWindow->GetSurface()->RecompileShader();
-		_projectPath = projectPath;
 
 		tinyxml2::XMLElement* settingsElement = projectElement->FirstChildElement("settings");
 		settings.vsync = strcmp(settingsElement->FirstChildElement("vsync")->GetText(), "on") == 0? true : false; 
@@ -218,12 +208,17 @@ namespace SPG
 		settingsElement->FirstChildElement("framebufferSize")->FirstChildElement("width")->QueryIntText(&(settings.framebufferSize.X));
 		settingsElement->FirstChildElement("framebufferSize")->FirstChildElement("height")->QueryIntText(&(settings.framebufferSize.Y));
 
-		settingsElement->FirstChildElement("font")->FirstChildElement("size")->QueryIntText((int*)&(settings.fontSize));
 
 		tinyxml2::XMLElement* colorElement = settingsElement->FirstChildElement("font")->FirstChildElement("color");
 		colorElement->FirstChildElement("red")->QueryFloatText(&(settings.fontColor.X));
 		colorElement->FirstChildElement("green")->QueryFloatText(&(settings.fontColor.Y));
 		colorElement->FirstChildElement("blue")->QueryFloatText(&(settings.fontColor.Z));
+
+
+		_editorWindow->SetScriptBuffer((void*)script, strlen(script));
+		_viewportWindow->OnFramebufferSizeChange();
+		_projectPath = projectPath;
+		_tempSettings = settings;
 	}
 	
 	void Application::SaveProjectAs()
@@ -248,6 +243,15 @@ namespace SPG
 			FileSystem::WriteToFile(_projectPath.c_str(), (void*)projectFile.c_str(), projectFile.length() + 1, OpenMode::Overwrite);
 		}
 	}
+	
+	void Application::ApplySettings()
+	{
+		
+		_viewportWindow->OnFramebufferSizeChange();
+		//vsync.
+		RendererBackend::GetSingleton()->SetVsync(settings.vsync);
+		//font color.
+	}
 	std::string Application::BuildProjectFile()
 	{
 		std::string result;
@@ -267,8 +271,7 @@ namespace SPG
 		framebufferHeightElement->SetText(settings.framebufferSize.Y);
 
 		tinyxml2::XMLElement* fontElement = settingsElement->InsertNewChildElement("font");
-		tinyxml2::XMLElement* fontSizeElement = fontElement->InsertNewChildElement("size");
-		fontSizeElement->SetText(settings.fontSize);
+
 		tinyxml2::XMLElement* fontColorElement = fontElement->InsertNewChildElement("color");
 		tinyxml2::XMLElement* fontColorRedElement = fontColorElement->InsertNewChildElement("red");
 		fontColorRedElement->SetText(settings.fontColor.X);
@@ -313,6 +316,16 @@ namespace SPG
 	char* Application::GetScriptBuffer()
 	{
 		return _singleton->_editorWindow->GetScriptBuffer();
+	}
+	
+	const std::string& Application::GetProjectPath()
+	{
+		return _singleton->_projectPath;
+	}
+	
+	const Settings& Application::GetSettings()
+	{
+		return _singleton->settings;
 	}
 
 	Application* Application::GetSingleton()

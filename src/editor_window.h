@@ -12,9 +12,11 @@ namespace SPG
         void Show();
         char* GetScriptBuffer();
         void SetScriptBuffer(void* data, size_t size);
+
         ImVec2 size;
         private:
         char* _scriptBuffer;
         ImGuiWindowFlags _editorFlags = 0;
+        private:
     };
 }

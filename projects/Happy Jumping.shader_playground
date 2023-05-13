@@ -6,9 +6,11 @@
             <height>720</height>
         </framebufferSize>
         <font>
-            <size>12</size>
-            <color>4294967295</color>
-            <family></family>
+            <color>
+                <red>1</red>
+                <green>1</green>
+                <blue>1</blue>
+            </color>
         </font>
     </settings>
     <script><![CDATA[// Copyright Inigo Quilez, 2019 - https://iquilezles.org/

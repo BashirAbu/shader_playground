@@ -13,7 +13,7 @@ namespace SPG
         Surface(const Vector2i& framebufferSize);
         ~Surface();
         void Render();
-        void Recreate();
+        void Recreate(const Vector2i& framebufferSize);
         void RecompileShader();
         //uniforms:
         //-time

@@ -2,6 +2,8 @@
 #include "renderer/render_command.h"
 #include "application.h"
 #include "renderer/opengl/opengl_headers.h"
+#include "stb_image_write.h"
+#include <filesystem>
 namespace SPG
 {
     const char* defVertShader = R"(
@@ -41,6 +43,19 @@ namespace SPG
     Surface::Surface(const Vector2i& framebufferSize)
     {
         _shaderBuffer = new char[70000];
+        Recreate(framebufferSize);
+    }
+    
+    void Surface::Recreate(const Vector2i& framebufferSize)
+    {
+        static bool init = false;
+        if(init)
+        {
+            _vertexBuffer.reset();
+            _indexBuffer.reset();
+            _vertexArray.reset();
+        }
+        init = true;
         Vector2i res = framebufferSize;
         _shader = std::shared_ptr<Shader>(Shader::Create(defVertShader, defFragShader));
         float vertices[] = 
@@ -72,11 +87,6 @@ namespace SPG
         _vertexArray->Unbind();
     }
     
-    void Surface::Recreate()
-    {
-        
-    }
-    
     void Surface::RecompileShader()
     {
         memset(_shaderBuffer, 0, 70000 * sizeof(char));
@@ -105,11 +115,13 @@ namespace SPG
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-        FramebufferSpecs framebufferSpecs = {1920,  1080};
+        FramebufferSpecs framebufferSpecs;
+        framebufferSpecs.width = Application::GetSettings().framebufferSize.X;
+        framebufferSpecs.height = Application::GetSettings().framebufferSize.Y;
         _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
         TextureSpecs renderTexSpecs;
-        renderTexSpecs.width = 800;
-        renderTexSpecs.height = 450;
+        renderTexSpecs.width = framebufferSpecs.width;
+        renderTexSpecs.height = framebufferSpecs.height;
         _renderTex = std::shared_ptr<Texture>(Texture::Create(renderTexSpecs));
         _surface = std::make_shared<Surface>(Vector2i(framebufferSpecs.width, framebufferSpecs.height));
     }
@@ -168,10 +180,38 @@ namespace SPG
             {
                 _surface->RecompileShader();
             }
-        }
-        ImGui::End();
+            ImGui::SameLine();
+            if(ImGui::Button("Screenshot"))
+            {
+                const void* screenshotData = _framebuffer->GetColorAttachment()->GetTextureData();
+                std::string path = Application::GetProjectPath();
+                std::size_t pos = path.find(".shader_playground"); // Find the position of the substring in the string
+                if (pos != std::string::npos) { // If the substring was found
+                    path.erase(pos, 18); // Remove the substring from the string
+                }
+                if(path == "")
+                {
+                    path = "data\\";
+                    path = path + "screenshots\\";
+                }
+                else 
+                {
+                    path = path + "\\screenshots\\";
+                    std::filesystem::path dirPath = path;
+                    if (!std::filesystem::exists(dirPath))
+                        std::filesystem::create_directories(dirPath);
+                }
+                
+                std::string name = "screenshot_" + std::to_string(Application::GetTime()) + ".png";
+                name =  path == "data\\screenshots\\"? path + "untitled_" + name :  path + name;
 
-         
+                if(!stbi_write_png(name.c_str(),  _framebuffer->GetColorAttachment()->GetSize().X,  _framebuffer->GetColorAttachment()->GetSize().Y, 3, screenshotData,  _framebuffer->GetColorAttachment()->GetSize().X * 3))
+                {
+                    SPG_LOG_ERROR("Cannot take screenshot.");
+                }
+            }
+        }
+        ImGui::End();    
     }
     
     const Vector2i& ViewportWidnow::GetFramebufferSize() const
@@ -181,6 +221,11 @@ namespace SPG
     
     void ViewportWidnow::OnFramebufferSizeChange()
     {
-        
+        FramebufferSpecs specs;
+        specs.width = Application::GetSettings().framebufferSize.X;
+        specs.height = Application::GetSettings().framebufferSize.Y;
+        _framebuffer->Recreate(specs);
+        _surface->Recreate({specs.width, specs.height});
+        _surface->RecompileShader();
     }
 }

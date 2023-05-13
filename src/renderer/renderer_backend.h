@@ -19,6 +19,7 @@ namespace SPG
         static RendererBackend* Create(const RendererBackendSpecs& specs);
         static RendererBackend* GetSingleton();
         virtual RendererBackendAPI GetAPI() = 0;
+		virtual void SetVsync(bool on) = 0;
     private:
         static RendererBackend* singleton;
     };

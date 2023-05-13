@@ -19,8 +19,7 @@ namespace SPG
 	{
 		bool vsync = true;
 		Vector2i framebufferSize = {1280, 720};
-		uint32_t fontSize = 12;
-		Vector3f fontColor = {1, 1, 1};
+		Vector4f fontColor = {1, 1, 1, 1};
 	};
 	class Application
 	{
@@ -34,17 +33,21 @@ namespace SPG
 		void LoadProject(std::string projectPath);
 		void SaveProjectAs();
 		void SaveProject();
+		void ApplySettings();
 		static const Vector2i GetViewportFramebufferSize();
 		static const float GetDeltaTime();
 		static const float GetTime();
 		static const uint32_t GetNumberOfRenderedFrames();
 		static char* GetScriptBuffer();
+		static const std::string& GetProjectPath();
+		static const Settings& GetSettings();
 	private:
 		Application(const ApplicationSpecs& specs);
 		std::string BuildProjectFile();
 	public:
 		Settings settings;
 	private:
+		bool _openSettings = false;
 		Settings _tempSettings;
 		float _time = 0.0f, _deltaTime = 0.0f;
 		uint32_t _renderedFrames = 0;

@@ -267,6 +267,11 @@ function = (PFN_##function) wglGetProcAddress(#function);
         return _specs.api;
     }
     
+    void Win32OpenGLRendererBackend::SetVsync(bool on)
+    {
+        wglSwapIntervalEXT(on? 1 : 0);
+    }
+    
     Win32OpenGLRendererBackend::Win32OpenGLRendererBackend(const RendererBackendSpecs& specs)
     {
         _specs = specs;

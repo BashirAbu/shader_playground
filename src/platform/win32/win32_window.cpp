@@ -126,7 +126,7 @@ namespace SPG
 	{
 		_windowData.running = false;
 	}
-	
+
 	const bool Win32Window::IsWindowRunning() const
 	{
 		return _windowData.running;
