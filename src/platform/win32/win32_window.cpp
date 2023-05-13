@@ -68,6 +68,10 @@ namespace SPG
         windowClass.hInstance = hInstance;
         windowClass.lpszClassName = specs.title;
         windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+
+		windowClass.hIcon = (HICON)LoadImage(NULL, L"data/icon.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+
+
         RegisterClassW(&windowClass );
 		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 		_windowStyle |= specs.style == WindowStyle::PopUp? WS_POPUP : 0;
@@ -125,6 +129,11 @@ namespace SPG
 	void Win32Window::Quit()
 	{
 		_windowData.running = false;
+	}
+	
+	void Win32Window::UpdateWindowTitle(const char* title)
+	{
+		SetWindowTextA(_hwnd, title);
 	}
 
 	const bool Win32Window::IsWindowRunning() const

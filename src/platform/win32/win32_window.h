@@ -19,6 +19,7 @@ namespace SPG
 		virtual void PollEvents();
         virtual void SwapBackBuffer();
 		virtual void Quit();
+		virtual void UpdateWindowTitle(const char* title) override;
 		const bool IsWindowRunning() const;
 	private:
 		WindowData _windowData;

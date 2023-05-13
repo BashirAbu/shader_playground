@@ -27,6 +27,7 @@ namespace SPG
 		virtual const bool IsWindowRunning() const = 0;
         virtual void SwapBackBuffer() = 0;
 		virtual void Quit() = 0;
+		virtual void UpdateWindowTitle(const char* title) = 0;
 	protected:
 	};
 }

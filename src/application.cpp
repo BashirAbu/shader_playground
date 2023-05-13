@@ -280,6 +280,8 @@ namespace SPG
 		_viewportWindow->OnFramebufferSizeChange();
 		_projectPath = projectPath;
 		_tempSettings = settings;
+		std::string title = "Shader Playground - " +  projectPath;
+		_mainWindow->UpdateWindowTitle(title.c_str());
 	}
 	
 	void Application::SaveProjectAs()

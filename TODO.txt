@@ -1,4 +1,2 @@
--Settings Menu
--ImGui Style
--Fullscreen mode
--Linux port (big stuffffffffff)
+-Icon
+-Write readme

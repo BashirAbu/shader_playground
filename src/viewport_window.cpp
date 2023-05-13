@@ -179,9 +179,9 @@ namespace SPG
 
 
             ImVec2 avArea = ImGui::GetContentRegionAvail();
-            ImGui::SetCursorPos({(avArea.x / 2) - 120, 30});
+            ImGui::SetCursorPos({(avArea.x / 2) , 30});
             ImGui::Text("FPS: %.0f", 1.0f / Application::GetDeltaTime());
-            ImGui::SameLine();
+            ImGui::SetCursorPos({(avArea.x / 2) - 40, 60});
             if(ImGui::Button("Compile"))
             {
                 _surface->RecompileShader();
