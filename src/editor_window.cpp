@@ -5,7 +5,7 @@ namespace SPG
 {
     EditorWidnow::EditorWidnow()
     {
-        _editorFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+        _editorFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
         _scriptBuffer = new char[SCRIPT_BUFFER_SIZE];
         memset(_scriptBuffer, 0, SCRIPT_BUFFER_SIZE * sizeof(char));
         const char* temp = 
@@ -26,7 +26,7 @@ R"(void mainImage( out vec4 fragColor, in vec2 fragCoord )
     }
     void EditorWidnow::Show()
     {
-        ImGui::Begin("Editor");
+        ImGui::Begin("Editor", nullptr, _editorFlags);
         {
             size = ImGui::GetContentRegionAvail();
             ImGui::PushStyleColor(ImGuiCol_Text, *((ImVec4*) &(Application::GetSettings().fontColor.elements))); // Red color

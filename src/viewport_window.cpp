@@ -114,7 +114,7 @@ namespace SPG
 
     ViewportWidnow::ViewportWidnow()
     {
-        _viewPortFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+        _viewPortFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
         FramebufferSpecs framebufferSpecs;
         framebufferSpecs.width = Application::GetSettings().framebufferSize.X;
         framebufferSpecs.height = Application::GetSettings().framebufferSize.Y;
@@ -133,9 +133,9 @@ namespace SPG
     void ViewportWidnow::Show()
     {
         
-        ImGui::Begin("Viewport");
+        ImGui::Begin("Viewport", nullptr, _viewPortFlags);
         {
-            ImGui::Text("FPS: %f", 1.0f / Application::GetDeltaTime());
+            
             {
                 RenderCommand::SetViewportSize(_framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
                 _framebuffer->Bind();
@@ -176,6 +176,12 @@ namespace SPG
                 ImGui::SetCursorPos(offset);
             }
             ImGui::Image((void*)(intptr_t)_renderTex->GetID(), imageSize);
+
+
+            ImVec2 avArea = ImGui::GetContentRegionAvail();
+            ImGui::SetCursorPos({(avArea.x / 2) - 120, 30});
+            ImGui::Text("FPS: %.0f", 1.0f / Application::GetDeltaTime());
+            ImGui::SameLine();
             if(ImGui::Button("Compile"))
             {
                 _surface->RecompileShader();
@@ -210,6 +216,7 @@ namespace SPG
                     SPG_LOG_ERROR("Cannot take screenshot. Path: %s", name.c_str());
                 }
             }
+            
         }
         ImGui::End();    
     }
