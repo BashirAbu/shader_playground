@@ -18,11 +18,14 @@ namespace SPG
         }break;*/
         case WM_CREATE: 
 		{
-			RendererBackendSpecs specs;
-			specs.internalWindowHandle = (void*)hWnd;
-			if(!RendererBackend::Create(specs))
-			{
-				//change context or somehting.
+			if(!RendererBackend::GetSingleton())
+			{		
+				RendererBackendSpecs specs;
+				specs.internalWindowHandle = (void*)hWnd;
+				if(!RendererBackend::Create(specs))
+				{
+					//change context or somehting.
+				}
 			}
 
         }break;
@@ -67,6 +70,7 @@ namespace SPG
         windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
         RegisterClassW(&windowClass );
 		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
+		_windowStyle |= specs.style == WindowStyle::PopUp? WS_POPUP : 0;
         RECT windowSize = { 0 };
         windowSize.left = 0;
         windowSize.right = specs.width;
@@ -85,7 +89,7 @@ namespace SPG
 			NULL
 		);
 
-        assert(_hwnd);
+        //assert(_hwnd);
         ShowWindow(_hwnd, SW_SHOW);
 		_windowData.running = true;
 		SetWindowLongPtrW(_hwnd, GWLP_USERDATA, (LONG_PTR)&_windowData);
@@ -110,7 +114,7 @@ namespace SPG
 			ImGui_ImplWin32_WndProcHandler(_hwnd, msg.message, msg.wParam, msg.lParam);
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
-		} 
+		}
 	}
 	
 	void Win32Window::SwapBackBuffer()

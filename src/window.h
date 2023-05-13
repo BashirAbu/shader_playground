@@ -3,6 +3,11 @@
 #include <Windows.h>
 namespace SPG
 {
+	enum class WindowStyle
+	{
+		default = 0,
+		PopUp
+	};
 	struct WindowSpecs
 	{
 		wchar_t* title = L"Shader Playground";
@@ -10,6 +15,7 @@ namespace SPG
 		int32_t height = 720;
 		int32_t windowPosX = 600;
 		int32_t windowPosY = 200;
+		WindowStyle style = WindowStyle::default;
 	};
 	class Window
 	{

@@ -20,8 +20,7 @@ namespace SPG
 		bool vsync = true;
 		Vector2i framebufferSize = {1280, 720};
 		uint32_t fontSize = 12;
-		char* fontFamily = "";
-		uint32_t color = 0xffffffff;
+		Vector3f fontColor = {1, 1, 1};
 	};
 	class Application
 	{
@@ -46,6 +45,7 @@ namespace SPG
 	public:
 		Settings settings;
 	private:
+		Settings _tempSettings;
 		float _time = 0.0f, _deltaTime = 0.0f;
 		uint32_t _renderedFrames = 0;
 		std::shared_ptr<Window> _mainWindow;
@@ -54,4 +54,6 @@ namespace SPG
 		std::string _projectPath = "";
 		static Application* _singleton;
 	};
+
+	
 }

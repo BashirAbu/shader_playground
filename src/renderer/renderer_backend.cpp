@@ -17,7 +17,6 @@ namespace SPG
     
     RendererBackend* RendererBackend::GetSingleton()
     {
-        assert(singleton);
         return singleton;
     }
 

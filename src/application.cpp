@@ -58,8 +58,7 @@ namespace SPG
 		_editorWindow = std::make_unique<EditorWidnow>();
 		_viewportWindow->GetSurface()->RecompileShader();
 	}
-
-
+	bool openSettings = false;
 	void Application::Run()
 	{
 		std::chrono::time_point start_time = std::chrono::high_resolution_clock::now();
@@ -70,7 +69,12 @@ namespace SPG
 		{
 			_time += _deltaTime;
 			_renderedFrames += uint32_t(1.0f / _deltaTime);
+
+
+			//SPG::SPGImGui::PollEvents();
 			_mainWindow->PollEvents();
+			
+
 			SPG::RenderCommand::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			RenderCommand::Clear();
 			SPG::SPGImGui::NewFrame();
@@ -98,6 +102,10 @@ namespace SPG
 					{
 						SaveProjectAs();
 					}
+					if(ImGui::MenuItem("Settings"))
+					{
+						openSettings = true;
+					}
 					if(ImGui::MenuItem("Exit"))
 					{
 						Quit();
@@ -108,11 +116,60 @@ namespace SPG
 				
 				ImGui::EndMainMenuBar();
     		}
-
 			
+			if(openSettings)
+			{
+				ImGui::OpenPopup("Settings");
+				ImGui::SetWindowSize({512, 512});
+			}
+			ImGuiWindowFlags settingPopUpFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+			
+			if (ImGui::BeginPopupModal("Settings", nullptr , settingPopUpFlags)) 
+			{
+				ImVec2 windowSize = ImGui::GetContentRegionAvail();
+
+ 				ImGui::Text("Vsync:");
+				ImGui::SameLine();
+				ImGui::Checkbox("##", &(_tempSettings.vsync));
+
+				ImGui::Text("Framebuffer Size:");
+				ImGui::SameLine();
+				ImGui::InputInt2("##", (_tempSettings.framebufferSize.elements));
+
+				ImGui::Text("Font Size:");
+				ImGui::SameLine();
+				ImGui::InputInt("pt", (int*)&(_tempSettings.fontSize));
+
+
+				ImGui::Text("Font Color:");
+				ImGui::SameLine();
+				ImGui::ColorEdit3("##", (_tempSettings.fontColor.elements));
+
+				ImGui::SetCursorPos({windowSize.x - 80, windowSize.y});
+				if (ImGui::Button("Cancel")) {
+					ImGui::CloseCurrentPopup();
+					openSettings = false;
+					_tempSettings.fontColor = settings.fontColor;
+					_tempSettings.fontSize = settings.fontSize;
+					_tempSettings.framebufferSize = settings.framebufferSize;
+					_tempSettings.vsync = settings.vsync;
+				}
+				ImGui::SameLine();
+				if(ImGui::Button("OK"))
+				{
+					settings.fontColor = _tempSettings.fontColor;
+					settings.fontSize = _tempSettings.fontSize;
+					settings.framebufferSize = _tempSettings.framebufferSize;
+					settings.vsync = _tempSettings.vsync;
+					ImGui::CloseCurrentPopup();
+					openSettings = false;
+				}
+
+				ImGui::EndPopup();
+			}
 			_editorWindow->Show();
 			_viewportWindow->Show();
-
+			ImGui::ShowDemoWindow();
 
 			SPG::SPGImGui::EndFrame();
 			_mainWindow->SwapBackBuffer();
@@ -154,6 +211,19 @@ namespace SPG
 		_editorWindow->SetScriptBuffer((void*)script, strlen(script));
 		_viewportWindow->GetSurface()->RecompileShader();
 		_projectPath = projectPath;
+
+		tinyxml2::XMLElement* settingsElement = projectElement->FirstChildElement("settings");
+		settings.vsync = strcmp(settingsElement->FirstChildElement("vsync")->GetText(), "on") == 0? true : false; 
+
+		settingsElement->FirstChildElement("framebufferSize")->FirstChildElement("width")->QueryIntText(&(settings.framebufferSize.X));
+		settingsElement->FirstChildElement("framebufferSize")->FirstChildElement("height")->QueryIntText(&(settings.framebufferSize.Y));
+
+		settingsElement->FirstChildElement("font")->FirstChildElement("size")->QueryIntText((int*)&(settings.fontSize));
+
+		tinyxml2::XMLElement* colorElement = settingsElement->FirstChildElement("font")->FirstChildElement("color");
+		colorElement->FirstChildElement("red")->QueryFloatText(&(settings.fontColor.X));
+		colorElement->FirstChildElement("green")->QueryFloatText(&(settings.fontColor.Y));
+		colorElement->FirstChildElement("blue")->QueryFloatText(&(settings.fontColor.Z));
 	}
 	
 	void Application::SaveProjectAs()
@@ -200,10 +270,12 @@ namespace SPG
 		tinyxml2::XMLElement* fontSizeElement = fontElement->InsertNewChildElement("size");
 		fontSizeElement->SetText(settings.fontSize);
 		tinyxml2::XMLElement* fontColorElement = fontElement->InsertNewChildElement("color");
-		fontColorElement->SetText(settings.color);
-		tinyxml2::XMLElement* fontFamilyElement = fontElement->InsertNewChildElement("family");
-		fontFamilyElement->SetText(settings.fontFamily);
-
+		tinyxml2::XMLElement* fontColorRedElement = fontColorElement->InsertNewChildElement("red");
+		fontColorRedElement->SetText(settings.fontColor.X);
+		tinyxml2::XMLElement* fontColorGreenElement = fontColorElement->InsertNewChildElement("green");
+		fontColorGreenElement->SetText(settings.fontColor.Y);
+		tinyxml2::XMLElement* fontColorBlueElement = fontColorElement->InsertNewChildElement("blue");
+		fontColorBlueElement->SetText(settings.fontColor.Z);
 
 		tinyxml2::XMLElement* scriptElement = rootElement->InsertNewChildElement("script");
 		tinyxml2::XMLText* codeText = xmlDoc.NewText(buffer);
