@@ -207,7 +207,7 @@ namespace SPG
 
                 if(!stbi_write_png(name.c_str(),  _framebuffer->GetColorAttachment()->GetSize().X,  _framebuffer->GetColorAttachment()->GetSize().Y, 3, screenshotData,  _framebuffer->GetColorAttachment()->GetSize().X * 3))
                 {
-                    SPG_LOG_ERROR("Cannot take screenshot.");
+                    SPG_LOG_ERROR("Cannot take screenshot. Path: %s", name.c_str());
                 }
             }
         }
