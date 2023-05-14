@@ -38,7 +38,7 @@ namespace SPG
             void OnFramebufferSizeChange();
         private:
             ImGuiWindowFlags _viewPortFlags = 0;
-            std::shared_ptr<Framebuffer> _framebuffer;
+            Framebuffer* _framebuffer;
             std::shared_ptr<Texture> _renderTex;
             std::shared_ptr<Surface> _surface;
             float _aspectRatio = 16.0f / 9.0f;

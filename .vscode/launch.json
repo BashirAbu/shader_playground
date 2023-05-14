@@ -9,7 +9,7 @@
             "name": "Debugger",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cmake_files/bin/shader_playground.exe",
+            "program": "${workspaceFolder}/bin/shader_playground.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",

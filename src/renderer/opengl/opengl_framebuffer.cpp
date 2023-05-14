@@ -46,9 +46,4 @@ namespace SPG
 		colorAttachment->Unbind();
     }
     
-    
-    const std::shared_ptr<Texture>& OpenGLFramebuffer::GetColorAttachment() const 
-    {
-        return colorAttachment;
-    }
 }

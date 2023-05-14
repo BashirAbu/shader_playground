@@ -12,7 +12,7 @@ namespace SPG
         virtual void Bind() override;
         virtual void Unbind() override;
         virtual void Recreate(const FramebufferSpecs& specs) override;
-        virtual const std::shared_ptr<Texture>& GetColorAttachment() const override;
+        const std::shared_ptr<Texture>& GetColorAttachment() const override {return colorAttachment;}
     private:
         uint32_t _id;
         FramebufferSpecs _specs;

@@ -110,15 +110,13 @@ namespace SPG
         _vertexArray->Unbind();
 
     }
-    
-
     ViewportWidnow::ViewportWidnow()
     {
         _viewPortFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
         FramebufferSpecs framebufferSpecs;
         framebufferSpecs.width = Application::GetSettings().framebufferSize.X;
         framebufferSpecs.height = Application::GetSettings().framebufferSize.Y;
-        _framebuffer = std::shared_ptr<Framebuffer>(Framebuffer::Create(framebufferSpecs));
+        _framebuffer = Framebuffer::Create(framebufferSpecs);
         TextureSpecs renderTexSpecs;
         renderTexSpecs.width = framebufferSpecs.width;
         renderTexSpecs.height = framebufferSpecs.height;
@@ -137,6 +135,7 @@ namespace SPG
         {
             
             {
+                
                 RenderCommand::SetViewportSize(_framebuffer->GetColorAttachment()->GetSize().X, _framebuffer->GetColorAttachment()->GetSize().Y);
                 _framebuffer->Bind();
                 RenderCommand::SetClearColor(0.0f, 1.0f, 0.0f, 1.0f);

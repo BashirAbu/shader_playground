@@ -1,3 +1,4 @@
+#define UNICODE
 #include "win32_window.h"
 #include "renderer/renderer_backend.h"
 #include "renderer/render_command.h"
@@ -69,10 +70,10 @@ namespace SPG
         windowClass.lpszClassName = specs.title;
         windowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
-		windowClass.hIcon = (HICON)LoadImage(NULL, L"data/icon.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+		windowClass.hIcon = (HICON)LoadImageW(NULL, L"data/icon.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
 
 
-        RegisterClassW(&windowClass );
+        RegisterClassW(&windowClass);
 		_windowStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 		_windowStyle |= specs.style == WindowStyle::PopUp? WS_POPUP : 0;
         RECT windowSize = { 0 };
