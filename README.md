@@ -26,7 +26,7 @@ cl-build.bat
 # Or for release mode
 cl-build.bat release
 ```
-##Quick Tour
+## Quick Tour
 The user interface of Shader Playground is designed for simplicity and ease of use, consisting of two main panels: the Viewport and the Editor.
 - The Viewport panel visualizes the output of your GLSL code execution. This panel also features a Frames Per Second (FPS) counter for performance tracking. Additionally, it provides a Compile button for executing your GLSL code, and a Screenshot button for capturing the current Viewport state.
 - The Editor panel serves as your workspace for writing and modifying GLSL code.
