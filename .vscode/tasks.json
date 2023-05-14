@@ -4,7 +4,7 @@
         {
             "label": "Cmake Build Debug",
             "type": "shell",
-            "command": "./build.bat Debug",
+            "command": "./cl-build.bat",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
