@@ -30,10 +30,16 @@ cl-build.bat release
 The user interface of Shader Playground is designed for simplicity and ease of use, consisting of two main panels: the Viewport and the Editor.
 - The Viewport panel visualizes the output of your GLSL code execution. This panel also features a Frames Per Second (FPS) counter for performance tracking. Additionally, it provides a Compile button for executing your GLSL code, and a Screenshot button for capturing the current Viewport state.
 - The Editor panel serves as your workspace for writing and modifying GLSL code.
+
 ![image](https://github.com/BashirAbu/shader_playground/assets/80569644/c939b5c2-87a4-4445-9f80-29d8d11de0f6)
+
 - When working within a project, any screenshots captured are automatically stored in the project's directory under ProjectName/screenshots/. If you're using Shader Playground without a specified project, the screenshots will be saved in the application's executable directory, specifically under data/screenshots/.
 - In the File menu, you can find options to save your current project, save it under a new name with the 'Save As' function, or load an existing project. There's also the ability to run test projects located in the 'examples' folder.
+ 
 ![image](https://github.com/BashirAbu/shader_playground/assets/80569644/cfa29f32-8099-4f7c-b596-0ac9259ba5b3)
+
 ![image](https://github.com/BashirAbu/shader_playground/assets/80569644/6253f670-ed0b-41b0-8be7-e3d73b9e59fb)
+
 - The File menu also houses the 'Settings' option, which opens a pop-up settings window. Here, you can tailor your Shader Playground experience by enabling or disabling VSync, adjusting the framebuffer size (Viewport size) in pixels, and changing the font color for the Editor panel.
+
 ![image](https://github.com/BashirAbu/shader_playground/assets/80569644/5b323d07-b697-4e34-9c67-3ca1bd794bcb)
