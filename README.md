@@ -12,7 +12,7 @@ Before you begin, ensure that you have met the following requirements:
 - You have installed MSVC build tools.
 
 ### Windows
-To build Shader Playground from source, run the folowing script in the commandline
+To build Shader Playground from source, run the folowing script in the command-line
 ```batchscript
 # Clone the repository
 git clone https://github.com/BashirAbu/shader_playground.git --recursive
