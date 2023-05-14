@@ -1,5 +1,6 @@
 set arg1=%1
 mkdir bin\int\
+mkdir bin\data\screenshots\
 call vcvarsall x64
 set FLAGS=/EHsc /utf-8 /Od /MP /MT /W3 /wd4312 /wd4172 /wd4127 /wd4530 /wd4459 /wd5105 /wd4100 /wd4996 /std:c++17 /Z7
 set DEFINES=/D SPG_WINDOWS /D SPG_DEBUG
