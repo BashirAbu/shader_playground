@@ -36,7 +36,7 @@ The user interface of Shader Playground is designed for simplicity and ease of u
 </div>
 
 - When working within a project, any screenshots captured are automatically stored in the project's directory under ProjectName/screenshots/. If you're using Shader Playground without a specified project, the screenshots will be saved in the application's executable directory, specifically under data/screenshots/.
-- In the File menu, you can find options to save your current project, save it under a new name with the 'Save As' function, or load an existing project. There's also the ability to run test projects located in the 'examples' folder.
+- In the File menu, you can find options to save your current project, save it under a new name with the 'Save As' function, or load an existing project. ***There's also the ability to run test projects located in the 'examples' folder***.
 
  <div align="center">
 <img src="https://github.com/BashirAbu/shader_playground/assets/80569644/cfa29f32-8099-4f7c-b596-0ac9259ba5b3)" style="border-radius: 50%;">
