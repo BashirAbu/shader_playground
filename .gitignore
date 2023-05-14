@@ -33,4 +33,3 @@
 *.app
 .vs/
 cmake_files/
-bin/
