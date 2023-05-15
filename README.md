@@ -55,3 +55,13 @@ The user interface of Shader Playground is designed for simplicity and ease of u
 
 
 - The way you write GLSL shaders in Shader Playground is similar to Shadertoy. If you'd like to learn more about writing shaders, you can refer to the Shadertoy documentation and their guide available at https://www.shadertoy.com/howto.
+
+## Project Dependencies
+
+This project relies on several key dependencies:
+
+1. **Dear ImGui**: This library is used for creating and managing the project's User Interface. More information can be found in the [Dear ImGui GitHub Repository](https://github.com/ocornut/imgui).
+
+2. **stb_image**: This library is used for loading and writing PNG files within the project. More information can be found in the [stb GitHub Repository](https://github.com/nothings/stb).
+
+3. **tinyxml2**: This library is used for saving the project file in an XML format. More information can be found in the [tinyxml2 GitHub Repository](https://github.com/leethomason/tinyxml2).
