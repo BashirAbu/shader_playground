@@ -134,42 +134,10 @@ namespace SPG
 			SPG::SPGImGui::NewFrame();
 
 			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-			if (ImGui::BeginMainMenuBar()) {
-				if (ImGui::BeginMenu("File")) 
-				{
-					if(ImGui::MenuItem("Load Project"))
-					{
-						LoadProject(FileSystem::OpenFileDialog(0));
-					}
-					if(ImGui::MenuItem("Save"))
-					{
-						if(_projectPath == "")
-						{
-							SaveProjectAs();
-						}
-						else
-						{
-							SaveProject();
-						}
-					}
-					if(ImGui::MenuItem("Save As..."))
-					{
-						SaveProjectAs();
-					}
-					if(ImGui::MenuItem("Settings"))
-					{
-						_openSettings = true;
-					}
-					if(ImGui::MenuItem("Exit"))
-					{
-						Quit();
-					}
-
-					ImGui::EndMenu();
-				}
-				
-				ImGui::EndMainMenuBar();
-    		}
+			
+			DrawMainMenu();
+			
+			HandleSettingsPopup();
 			
 			if(_openSettings)
 			{
@@ -395,6 +363,95 @@ namespace SPG
 	{
 		assert(_singleton != nullptr);
 		return _singleton;
+	}
+	void DrawMainMenu() {
+	    if (!ImGui::BeginMainMenuBar())
+	        return;
+	
+	    if (ImGui::BeginMenu("File")) {
+	        DrawFileMenu();
+	        ImGui::EndMenu();
+	    }
+	
+	    ImGui::EndMainMenuBar();
+	}
+	
+	void DrawFileMenu() {
+	    if (ImGui::MenuItem("Load Project")) {
+	        LoadProject(FileSystem::OpenFileDialog(0));
+	    }
+	    if (ImGui::MenuItem("Save")) {
+	        if (_projectPath.empty()) {
+	            SaveProjectAs();
+	        } else {
+	            SaveProject();
+	        }
+	    }
+	    ImGui::Separator(); // Optional separator
+	    if (ImGui::MenuItem("Save As...")) {
+	        SaveProjectAs();
+	    }
+	    ImGui::Separator(); // Optional separator
+	    if (ImGui::MenuItem("Exit")) {
+	        Quit();
+	    }
+	}
+	
+	void HandleSettingsPopup() {
+	    if (_openSettings) {
+	        ImGui::OpenPopup("Settings");
+	        ImGui::SetWindowSize({512, 512});
+	    }
+	
+	    ImGuiWindowFlags settingPopUpFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	
+	    if (ImGui::BeginPopupModal("Settings", nullptr, settingPopUpFlags)) {
+	        DrawSettingsPopup();
+	        ImGui::EndPopup();
+	    }
+	}
+	
+	void DrawSettingsPopup() {
+	    ImVec2 windowSize = ImGui::GetContentRegionAvail();
+	
+	    ImGui::Text("Vsync:");
+	    ImGui::SameLine();
+	    ImGui::Checkbox("##VsyncCheckbox", &_tempSettings.vsync);
+	
+	    ImGui::Text("Framebuffer Size:");
+	    ImGui::SameLine();
+	    ImGui::InputInt2("##FramebufferSizeInput", _tempSettings.framebufferSize.elements);
+	
+	    ImGui::Text("Font Color:");
+	    ImGui::SameLine();
+	    ImGui::ColorEdit3("##FontColorEdit", _tempSettings.fontColor.elements);
+	
+	    ImGui::SetCursorPos({windowSize.x - 80, windowSize.y});
+	    if (ImGui::Button("Cancel")) {
+	        CancelSettingsChanges();
+	    }
+	    ImGui::SameLine();
+	    if (ImGui::Button("OK")) {
+	        ApplySettingsChanges();
+	    }
+	}
+	
+	void CancelSettingsChanges() {
+	    ImGui::CloseCurrentPopup();
+	    _openSettings = false;
+	    // Restore original settings
+	    _tempSettings = settings; // Assuming `_tempSettings` and `settings` are structs or classes
+	}
+	
+	void ApplySettingsChanges() {
+	    if (_tempSettings.framebufferSize.x < 0 || _tempSettings.framebufferSize.y < 0) {
+	        SPG_LOG_ERROR("Framebuffer width and height cannot be less than 0!");
+	    } else {
+	        settings = _tempSettings; // Apply new settings
+	        ImGui::CloseCurrentPopup();
+	        _openSettings = false;
+	        ApplySettings();
+	    }
 	}
 	
 }
